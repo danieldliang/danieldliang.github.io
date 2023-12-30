@@ -1,2 +1,2 @@
 # legendary-pancake
-a blog post (in the making)
+a blog (in the making)
