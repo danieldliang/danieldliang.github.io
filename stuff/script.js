@@ -25,3 +25,16 @@ document.addEventListener('DOMContentLoaded', function () {
         postsContainer.appendChild(postElement);
     });
 });
+
+function redirectusaco() {
+    window.location.href = "https://danieldliang.github.io/usaco";
+};
+function redirectvideos() {
+    window.location.href = "https://danieldliang.github.io/videos";
+};
+function redirectblog() {
+    window.location.href = "https://danieldliang.github.io/blog";
+};
+function redirectmisc() {
+    window.location.href = "https://danieldliang.github.io/miscellaneous";
+};
