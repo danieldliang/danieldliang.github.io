@@ -23,3 +23,7 @@ void unite(int A, int B) {
         height[rootB] = max(height[rootB], height[rootA] + 1);
     }
 }
+
+// if you want to implement Kruskal's, initialize a DSU. 
+// Then add the sorted from least to greatest weighted edges one-by-one to the DSU, with the exception of the edges from which their nodes are in the same component (which you check using the find() function)
+// for such exception, you just skip/continue the loop. And then you're done!
