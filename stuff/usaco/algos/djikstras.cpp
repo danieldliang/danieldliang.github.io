@@ -11,7 +11,7 @@ int main() {
 		int u = pq.top().second;
 		pq.pop();
 
-		for (const auto& next: adj[u]) { // adj is a vector which maps node ID (as index) to pair<int (this is the next adjacent node ID), int (weight of edge which connects current node to said adjacent node)>
+		for (const auto& next: adj[u]) { // adj is a vector which maps node ID (as index) to pair<int (weight of edge which connects current node to said adjacent node), int (this is the next adjacent node ID)>
 			int weight = next.first;
 			int v = next.second;
 
