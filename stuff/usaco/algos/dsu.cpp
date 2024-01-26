@@ -15,6 +15,7 @@ int find(int node) { // gets the representative, or rather recursively assigns t
 void unite(int A, int B) {
     int rootA = find(A);
     int rootB = find(B);
+    if (rootA == rootB) return;
     if (height[rootA] > height[rootB]) {
         father[rootB] = rootA;
         height[rootA] = max(height[rootA], height[rootB] + 1);
