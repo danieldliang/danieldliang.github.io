@@ -4,7 +4,6 @@ html {
 }
 
 body {
-/*     font-family: Arial, sans-serif; */
     margin: 0;
     padding: 0;
     display: flex;
@@ -31,8 +30,8 @@ header {
 }
 
 bottom {
-    margin-top: auto; /* Align text to the bottom of the page */
-    padding: 10px; /* Padding inside the paragraph */
+    margin-top: auto;
+    padding: 10px;
 }
 
 .container {
@@ -47,11 +46,20 @@ bottom {
 .image {
     flex: 1;
     padding: 20px;
-    justify-content: center; /* Align contents horizontally */
+    display: flex;
+    justify-content: center;
     align-items: center;
+}
+
+.image-container {
+    text-align: center;
 }
 
 .image img {
     max-width: 100%;
     height: auto;
+}
+
+.caption {
+    margin-top: 10px;
 }
