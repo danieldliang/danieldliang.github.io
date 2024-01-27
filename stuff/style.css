@@ -27,20 +27,10 @@ header {
 }
 
 .post {
-    border-bottom: 1px solid #ccc;
     margin-bottom: 20px;
-}
-
-.post h2 {
-    color: white
-}
-
-.post p {
-    color: white
 }
 
 bottom {
     margin-top: auto; /* Align text to the bottom of the page */
-    border: 1px solid white; /* Border for the paragraph */
     padding: 10px; /* Padding inside the paragraph */
 }
