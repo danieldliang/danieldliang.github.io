@@ -47,6 +47,8 @@ bottom {
 .image {
     flex: 1;
     padding: 20px;
+    justify-content: center; /* Align contents horizontally */
+    align-items: center;
 }
 
 .image img {
