@@ -51,15 +51,7 @@ bottom {
     align-items: center;
 }
 
-.image-container {
-    text-align: center;
-}
-
 .image img {
     max-width: 100%;
     height: auto;
-}
-
-.caption {
-    margin-top: 10px;
 }
