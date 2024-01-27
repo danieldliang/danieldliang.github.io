@@ -16,8 +16,6 @@ body {
 }
 
 header {
-    background-color: white;
-    color: black;
     text-align: center;
     padding: 1em;
 }
@@ -43,6 +41,6 @@ header {
 
 bottom {
     margin-top: auto; /* Align text to the bottom of the page */
-    border: 1px solid #ccc; /* Border for the paragraph */
+    border: 1px solid white; /* Border for the paragraph */
     padding: 10px; /* Padding inside the paragraph */
 }
