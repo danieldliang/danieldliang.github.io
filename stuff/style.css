@@ -34,3 +34,22 @@ bottom {
     margin-top: auto; /* Align text to the bottom of the page */
     padding: 10px; /* Padding inside the paragraph */
 }
+
+.container {
+    display: flex;
+}
+
+.text {
+    flex: 1;
+    padding: 20px;
+}
+
+.image {
+    flex: 1;
+    padding: 20px;
+}
+
+.image img {
+    max-width: 100%;
+    height: auto;
+}
