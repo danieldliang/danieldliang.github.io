@@ -11,8 +11,8 @@ body {
     min-height: 100vh;
     flex-direction: column;
     margin: 0;
-    border: 10px solid #333; /* Border around the entire body */
-    box-sizing: border-box; /* Include border in the total width and height */
+    border: 10px;
+    box-sizing: border-box;
 }
 
 header {
