@@ -1,5 +1,5 @@
 // Took and edited off of GFGs
-const int N = 200002; // array size 
+const int N = 200002; // 2 * max array size + 2
 
 int n;
 
