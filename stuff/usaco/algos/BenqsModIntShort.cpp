@@ -30,4 +30,4 @@ template<int MOD, int RT> struct mint {
 	friend mint operator*(mint a, mint b) { return a *= b; }
 };
 using mi = mint<(int)1e9+7, 5>;
-using vmi = V<mi>;
+using vmi = vector<mi>;
