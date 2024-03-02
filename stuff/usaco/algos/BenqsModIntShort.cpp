@@ -1,4 +1,5 @@
 // Source: Ben Qi
+
 /**
  * Description: Modular arithmetic. Assumes $MOD$ is prime.
  * Source: KACTL
