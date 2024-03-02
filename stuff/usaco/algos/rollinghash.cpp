@@ -1,4 +1,5 @@
 // Bovine Genomics Solution: https://usaco.org/index.php?page=viewproblem2&cpid=736
+// Also consider looking into Fast Hashing: https://codeforces.com/blog/entry/60737
 #include <bits/stdc++.h>
 using namespace std;
 
