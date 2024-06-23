@@ -10,7 +10,7 @@ int main() {
     ll n, m;
     cin >> n >> m;
 
-    ll segtree[2 * n + 20];
+    vector<ll> segtree(2 * n + 20, 0);
     for (ll i = 0; i < n; ++i) cin >> segtree[n + i];
     for (ll i = n - 1; i > 0; --i) segtree[i] = segtree[i << 1] + segtree[i << 1|1];
 
