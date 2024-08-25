@@ -8,9 +8,11 @@ int main() {
 	dist[src] = 0;
 
 	while (!pq.empty()) { // notice the pattern between djikstra's and bfs, dfs
-		int u = pq.top().second;
+		int uw = pq.top().first, u = pq.top().second;
 		pq.pop();
 
+		if (uw != dist[u]) continue;
+		
 		for (const auto& next: adj[u]) { // adj is a vector which maps node ID (as index) to pair<int (this is the next adjacent node ID), int (weight of edge which connects current node to said adjacent node)>
 			int v = next.first;
 			int weight = next.second;
