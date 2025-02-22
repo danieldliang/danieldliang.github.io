@@ -1,12 +1,10 @@
 // took this one directly off of USACO Guide
 
-const int MAX_N = 100000;
-
 int main() {
 	int n, m;
 	cin >> n >> m;
-	vector<int> graph[MAX_N];
-	int indegree[MAX_N]{};
+	vector<vector<int>> graph(n);
+	vector<int> indegree(n, 0);
 	queue<int> q;
 	for (int i = 0; i < m; i++) {
 		int a, b;
