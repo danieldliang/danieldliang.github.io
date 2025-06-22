@@ -198,7 +198,7 @@ a:hover { text-decoration: underline; }
 
 .form-msg { height: 1.4rem; font-size: .9rem; }
 
-/* Simple scroll-in animation */
+/* Scroll-in animation */
 @media (prefers-reduced-motion: no-preference) {
   [data-animate] {
     opacity: 0;
@@ -210,4 +210,22 @@ a:hover { text-decoration: underline; }
     opacity: 1;
     transform: none;
   }
+}
+
+/* 1. Keep the items vertically centered inside the list */
+.nav-list {
+  display: flex;
+  align-items: center;      /* ← add this line */
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Give all top-level links the same vertical padding.
+      This evens them out with the CTA button. */
+.nav-list > li > a {
+  display: block;
+  padding-block: .55rem;
+  line-height: 1;
 }
