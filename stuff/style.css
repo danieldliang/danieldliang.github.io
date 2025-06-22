@@ -1,4 +1,4 @@
-/* Basic design tokens */
+/* Base tokens */
 :root {
   --accent: #6d63ff;
   --accent-dark: #544dff;
@@ -11,9 +11,7 @@
 
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
+*::after { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -31,13 +29,13 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 .btn-primary,
-.btn-secondary,
-.cta {
+.btn-secondary {
   display: inline-block;
   padding: .8rem 1.5rem;
   border-radius: var(--radius);
   font-weight: 600;
   text-align: center;
+  line-height: 1;
 }
 
 .btn-primary {
@@ -64,11 +62,6 @@ a:hover { text-decoration: underline; }
   z-index: 100;
 }
 
-.brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
 .site-header .wrapper {
   display: flex;
   justify-content: space-between;
@@ -76,12 +69,21 @@ a:hover { text-decoration: underline; }
   padding-block: 1rem;
 }
 
+.brand { font-weight: 700; font-size: 1.1rem; }
+
 .nav-list {
   display: flex;
+  align-items: center;
   gap: 1.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+/* Equal padding for every top level link */
+.nav-list > li > a {
+  display: block;
+  padding-block: .55rem;
 }
 
 .nav-toggle { display: none; }
@@ -107,7 +109,6 @@ a:hover { text-decoration: underline; }
     opacity: 0;
     transition: max-height .4s ease, opacity .4s;
   }
-
   .nav-list.open {
     max-height: 20rem;
     opacity: 1;
@@ -116,9 +117,7 @@ a:hover { text-decoration: underline; }
 }
 
 /* Hero section */
-.hero {
-  padding-block: 4rem;
-}
+.hero { padding-block: 4rem; }
 
 .grid-2col {
   display: grid;
@@ -135,10 +134,9 @@ a:hover { text-decoration: underline; }
   line-height: 1.15;
   margin-top: 0;
 }
-
 .hero-text span { color: var(--accent); }
 
-/* Features */
+/* Features section */
 .features {
   padding-block: 4rem;
   background: #fff;
@@ -160,25 +158,29 @@ a:hover { text-decoration: underline; }
   border-radius: var(--radius);
   box-shadow: 0 4px 14px rgb(0 0 0 / .08);
 }
-
 .feature-card h3 { margin-top: 0; }
 
-/* Demo banner */
+/* Purple call to action banner */
+.cta-banner {
+  text-align: center;
+  padding-block: 3.5rem 1.75rem;
+  background: var(--accent);
+  color: #fff;
+}
+
+.cta-banner h2 { margin: 0 0 1rem; }
+.cta-banner p { color: #e7e7ff; margin: 0 0 1rem; }
+.cta-banner p:last-child { margin-bottom: 0; }
+
+/* Black button only inside the banner */
 .cta-banner .btn-secondary {
   background: #000;
   color: #fff;
   border: none;
 }
+.cta-banner .btn-secondary:hover { background: #222; }
 
-.cta-banner .btn-secondary:hover {
-  background: #222;
-  color: #fff;
-}
-
-.cta-banner h2 { margin-top: 0; }
-.cta-banner p { color: #e7e7ff; }
-
-/* Footer and contact */
+/* Footer and contact form */
 .site-footer {
   background: #1c1c1e;
   color: #cfcfd1;
@@ -202,34 +204,15 @@ a:hover { text-decoration: underline; }
 
 .form-msg { height: 1.4rem; font-size: .9rem; }
 
-/* Scroll-in animation */
+/* Scroll in animation */
 @media (prefers-reduced-motion: no-preference) {
   [data-animate] {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity .6s ease-out, transform .6s ease-out;
   }
-
   [data-animate].in-view {
     opacity: 1;
     transform: none;
   }
-}
-
-/* 1. Keep the items vertically centered inside the list */
-.nav-list {
-  display: flex;
-  align-items: center;      /* ← add this line */
-  gap: 1.5rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* 2. Give all top-level links the same vertical padding.
-      This evens them out with the CTA button. */
-.nav-list > li > a {
-  display: block;
-  padding-block: .55rem;
-  line-height: 1;
 }
