@@ -80,7 +80,7 @@ a:hover { text-decoration: underline; }
   padding: 0;
 }
 
-/* Equal padding for every top level link */
+/* Equal vertical padding for each top level link */
 .nav-list > li > a {
   display: block;
   padding-block: .55rem;
@@ -160,19 +160,23 @@ a:hover { text-decoration: underline; }
 }
 .feature-card h3 { margin-top: 0; }
 
-/* Purple call to action banner */
+/* Purple banner that invites the user to book a demo */
 .cta-banner {
-  text-align: center;
-  padding-block: 3.5rem 1.75rem;
   background: var(--accent);
   color: #fff;
+  text-align: center;
+  padding: 3.5rem 0 1.5rem;
 }
 
 .cta-banner h2 { margin: 0 0 1rem; }
-.cta-banner p { color: #e7e7ff; margin: 0 0 1rem; }
+
+.cta-banner p {
+  margin: 0 0 1.25rem;
+  color: #e7e7ff;
+}
 .cta-banner p:last-child { margin-bottom: 0; }
 
-/* Black button only inside the banner */
+/* Black button that appears only in this banner */
 .cta-banner .btn-secondary {
   background: #000;
   color: #fff;
