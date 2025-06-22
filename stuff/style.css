@@ -229,3 +229,18 @@ a:hover { text-decoration: underline; }
   padding-block: .55rem;
   line-height: 1;
 }
+
+/* Tightened CTA banner */
+.cta-banner {
+  padding-block: 3.5rem 1.75rem;
+}
+
+/* Remove the automatic bottom margin on the last text element */
+.cta-banner h2,
+.cta-banner p {
+  margin-block: 0 1rem;
+}
+
+.cta-banner p:last-child {
+  margin-bottom: 0;
+}
