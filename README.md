@@ -1,2 +1,1 @@
-# labelless-pancake
-landing page
+# Landing Page
