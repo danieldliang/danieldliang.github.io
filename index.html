@@ -1,46 +1,117 @@
 <!DOCTYPE html>
-<html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Daniel's Blog</title>
-    <link href="stuff/style.css" rel="stylesheet" type="text/css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nighthaven AI – Customer-Centric Automation</title>
+
+  <!-- Core stylesheet -->
+  <link rel="stylesheet" href="stuff/style.css">
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
 </head>
 
 <body>
-    <header>Hey, my name is Daniel Liang. Welcome to my website!</header>
+  <!-- Header with logo and navigation -->
+  <header class="site-header">
+    <div class="wrapper">
+      <a class="brand" href="#">Nighthaven AI</a>
 
-    <body>
-    <div class="container">
-        <div class="image">
-            <div class="image-container">
-                <img src="stuff/images/very_real_portrait.png" alt="image insert fail">
-                <div class="caption">Very real self-portrait of the man himself.</div>
-            </div>
-        </div>
-        <div class="text">
-            <p>
-            <br>I'm a competitive programmer, researcher, runner, and some more!</br>
-            
-            <br>Interested in machine learning and its applications in healthcare.</br>
-            
-            <br>But that's not all. Fitting one's self-interests into four narrow categories seems pretty suffocating in my opinion (Besides, who even creates the bounds to these categories? Not me, that's for sure.).</br>
-            
-            <br>I'll enjoy a game of blitz chess, or a good CS, math, and physics problem. Or almost any puzzle that makes me think logically and creatively. I guess the subject doesn't matter much.</br>
-    
-            <br>One of my life-long goals is to get good. One of my (hopefully) short-term goals is making USACO Platinum.</br>
-            </p>
-        </div>
+      <nav aria-label="Primary">
+        <button id="navBtn" class="nav-toggle" aria-controls="mainMenu" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          ☰
+        </button>
+
+        <ul id="mainMenu" class="nav-list">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a class="cta" href="#demo">Get a Demo</a></li>
+        </ul>
+      </nav>
     </div>
-        
-    <bottom>
-        <center>Assuming I actively maintain this website, expect to see my <a href="stuff/usaco/usaco.html">USACO solutions</a>, <a href="stuff/videos/videos.html">video clips</a> (coding tutorials, gaming, running, violin... etc.), <a href="stuff/blog/blog.html">blog posts</a> (of life updates), and <a href="stuff/miscellaneous/miscellaneous.html">whatever else I like doing in life at the time</a> (and I feel like posting).</center>
-    </bottom>
-    </body>
+  </header>
 
-    <script src="stuff/script.js"></script>
+  <!-- Hero section -->
+  <section class="hero">
+    <div class="wrapper grid-2col">
+      <div class="hero-text">
+        <h1>Your 24 / 7 AI-Powered<br><span>Customer Service Agent</span></h1>
+        <p>Reduce response times, boost satisfaction, and free your human team for higher-impact work. No code, no headaches.</p>
+        <a href="#demo" class="btn-primary">Request a Live Demo</a>
+      </div>
 
+      <picture class="hero-image">
+        <img src="stuff/images/very_real_portrait.png" alt="Illustration of Nighthaven AI agent">
+      </picture>
+    </div>
+  </section>
+
+  <!-- Feature highlights -->
+  <section id="features" class="features">
+    <div class="wrapper grid-3col">
+      <article class="feature-card">
+        <h3>Multichannel Support</h3>
+        <p>Chat, email, SMS, and social—all in one dashboard.</p>
+      </article>
+
+      <article class="feature-card">
+        <h3>Natural Conversations</h3>
+        <p>Powered by advanced language models that understand nuance and intent.</p>
+      </article>
+
+      <article class="feature-card">
+        <h3>Instant Insights</h3>
+        <p>Real-time analytics highlight common pain points and FAQs.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Demo call-to-action -->
+  <section id="demo" class="cta-banner">
+    <div class="wrapper">
+      <h2>See Nighthaven AI in Action</h2>
+      <p>Schedule a 15-minute walkthrough with one of our engineers—no strings attached.</p>
+      <a href="#contact" class="btn-secondary">Book Now</a>
+    </div>
+  </section>
+
+  <!-- Contact form and footer -->
+  <footer id="contact" class="site-footer">
+    <div class="wrapper grid-2col">
+      <form id="contactForm" class="contact-form" autocomplete="off" novalidate>
+        <h3>Drop Us a Line</h3>
+
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" required>
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required>
+        </label>
+
+        <label>
+          <span>Message</span>
+          <textarea name="message" rows="4" required></textarea>
+        </label>
+
+        <button type="submit" class="btn-primary">Send Message</button>
+        <p id="formMsg" class="form-msg" aria-live="polite"></p>
+      </form>
+
+      <div class="footer-meta">
+        <p>© <span id="year"></span> Nighthaven AI. All rights reserved.</p>
+        <p><strong>Email:</strong> hello@nighthaven.ai</p>
+        <p>Made by the Nighthaven team.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core scripts -->
+  <script src="stuff/script.js" defer></script>
 </body>
-
 </html>
