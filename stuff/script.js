@@ -1,27 +1,40 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Sample blog posts data
-    const postsData = [
-        { title: 'First Post', content: 'This is the content of the first post.' },
-        { title: 'Second Post', content: 'Another post with some content.' },
-        // Add more posts as needed
-    ];
+// Toggle the mobile navigation menu.
+const navBtn = document.getElementById('navBtn');
+const navList = document.getElementById('mainMenu');
 
-    const postsContainer = document.getElementById('posts');
+if (navBtn) {
+  navBtn.addEventListener('click', () => {
+    const isOpen = navList.classList.toggle('open');
+    navBtn.setAttribute('aria-expanded', isOpen);
+  });
+}
 
-    // Loop through posts data and create HTML elements
-    postsData.forEach(post => {
-        const postElement = document.createElement('div');
-        postElement.classList.add('post');
+// Handle the contact form. Replace the timeout with a real request.
+const form = document.getElementById('contactForm');
+const formMsg = document.getElementById('formMsg');
 
-        const titleElement = document.createElement('h2');
-        titleElement.textContent = post.title;
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formMsg.textContent = 'Sending…';
 
-        const contentElement = document.createElement('p');
-        contentElement.textContent = post.content;
+    // Simulate a network request.
+    await new Promise(r => setTimeout(r, 800));
 
-        postElement.appendChild(titleElement);
-        postElement.appendChild(contentElement);
+    form.reset();
+    formMsg.textContent = 'Thank you! We’ll get back to you soon.';
+  });
+}
 
-        postsContainer.appendChild(postElement);
-    });
-});
+// Insert the current year in the footer.
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Fade-in elements as they scroll into view.
+const animatedEls = document.querySelectorAll('[data-animate]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('in-view');
+  });
+}, { threshold: 0.15 });
+
+animatedEls.forEach(el => observer.observe(el));
