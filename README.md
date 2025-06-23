@@ -1,1 +1,1 @@
-# UPDATE: This is now a company landing page lol
+# UPDATE: This is now a product landing page lol
