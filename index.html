@@ -909,86 +909,159 @@
         }
       });
 
-      // === ASCII Torus Viewer ===
-      // Build and animate a 3D torus in ASCII art.  The torus is drawn into
-      // #torus-viewer using a framebuffer and z‑buffer similar to the
-      // classic donut.c program.  When the user drags inside the torus
-      // element, the rotation angles A (vertical tilt) and B (horizontal
-      // rotation) update accordingly.  When not dragging, the torus rotates
-      // slowly on its own.  The viewer is initialised once the page has
-      // loaded via initTorus().
-      function initTorus() {
-        const torusEl = document.getElementById('torus-viewer');
-        if (!torusEl) return;
-        let A = 0;
-        let B = 0;
+      // ==== ASCII 'D' viewer (draggable) ====
+      function initDViewer() {
+        const canvas = document.getElementById('torus-canvas');
+        const out = document.getElementById('torus-output');
+        if (!canvas || !out) return;
+      
         let dragging = false;
-        let lastX = 0;
-        let lastY = 0;
-        torusEl.addEventListener('mousedown', (e) => {
-          dragging = true;
-          lastX = e.clientX;
-          lastY = e.clientY;
-          torusEl.style.cursor = 'grabbing';
-        });
-        document.addEventListener('mousemove', (e) => {
-          if (!dragging) return;
-          const dx = e.clientX - lastX;
-          const dy = e.clientY - lastY;
-          // Adjust sensitivity: smaller multiplier for smoother rotation
-          B += dx * 0.005;
-          A += dy * 0.005;
-          lastX = e.clientX;
-          lastY = e.clientY;
-        });
-        document.addEventListener('mouseup', () => {
-          dragging = false;
-          torusEl.style.cursor = 'grab';
-        });
-        function renderFrame() {
-          const width = 60;
-          const height = 24;
-          const b = new Array(width * height).fill(' ');
-          const z = new Array(width * height).fill(0);
-          const cosA = Math.cos(A);
-          const sinA = Math.sin(A);
-          const cosB = Math.cos(B);
-          const sinB = Math.sin(B);
-          for (let j = 0; j < 6.28; j += 0.07) {
-            const ct = Math.cos(j);
-            const st = Math.sin(j);
-            for (let i = 0; i < 6.28; i += 0.02) {
-              const sp = Math.sin(i);
-              const cp = Math.cos(i);
-              const h = ct + 2;
-              const D = 1 / (sp * h * sinA + st * cosA + 5);
-              const t = sp * h * cosA - st * sinA;
-              const x = Math.floor(width / 2 + (width / 4) * D * (cp * h * cosB - t * sinB));
-              const y = Math.floor(height / 2 + (height / 2) * D * (cp * h * sinB + t * cosB));
-              const idx = x + width * y;
-              const luminance = Math.floor(8 * ((st * sinA - sp * ct * cosA) * cosB - sp * ct * sinA - st * cosA - cp * ct * sinB));
-              if (y >= 0 && y < height && x >= 0 && x < width && D > z[idx]) {
-                z[idx] = D;
-                const chars = '.,-~:;=!*#$@';
-                b[idx] = chars[luminance > 0 ? luminance : 0];
+        let lastX = 0, lastY = 0;
+        let A = 0, B = 0; // rotation angles
+        let auto = true;
+      
+        const W = 60, H = 26;     // ascii grid size
+        const zbufSize = W * H;
+      
+        // Build point cloud for a 3D 'D' (extruded outline):
+        // - vertical bar thickness = t
+        // - outer semicircle radius = r
+        // - inner radius rInner = r - t (hole)
+        // - extruded depth along z in [-extrude, extrude]
+        const r = 8;            // radius of curved part
+        const t = 3;            // thickness of vertical bar
+        const height = 18;      // total height (|y| <= height/2)
+        const extrude = 3;      // half-depth
+        const stepCurve = 0.12; // angular sampling
+        const stepZ = 1.0;
+      
+        const points = [];  // each: {pos:[x,y,z], norm:[nx,ny,nz]}
+      
+        function addPoint(x,y,z,nx,ny,nz){
+          const nlen = Math.hypot(nx,ny,nz) || 1;
+          points.push({pos:[x,y,z], norm:[nx/nlen, ny/nlen, nz/nlen]});
+        }
+      
+        // Curved outer face (semi-cylinder)
+        for (let theta=-Math.PI/2; theta<=Math.PI/2; theta+=stepCurve){
+          const cx = t + r * Math.cos(theta);
+          const cy = (height/2) * Math.sin(theta); // slight vertical squash looks nicer
+          const nx = Math.cos(theta);
+          const ny = Math.sin(theta);
+          for (let z=-extrude; z<=extrude; z+=stepZ){
+            addPoint(cx, cy, z, nx, ny, 0);
+          }
+        }
+        // Inner hole face (semi-cylinder)
+        const rInner = r - t;
+        if (rInner > 0){
+          for (let theta=-Math.PI/2; theta<=Math.PI/2; theta+=stepCurve){
+            const cx = t + rInner * Math.cos(theta);
+            const cy = (height/2 - t) * Math.sin(theta);
+            const nx = -Math.cos(theta);
+            const ny = -Math.sin(theta);
+            for (let z=-extrude; z<=extrude; z+=stepZ){
+              addPoint(cx, cy, z, nx, ny, 0);
+            }
+          }
+        }
+        // Vertical bar faces (two planes)
+        for (let y=-height/2; y<=height/2; y+=1){
+          for (let z=-extrude; z<=extrude; z+=stepZ){
+            addPoint(0, y, z, -1, 0, 0);  // left outer face
+            addPoint(t, y, z,  1, 0, 0);  // right face of bar
+          }
+        }
+        // Front/back caps on the bar
+        for (let x=0; x<=t; x+=1){
+          for (let y=-height/2; y<=height/2; y+=1){
+            addPoint(x, y, -extrude, 0,0,-1);
+            addPoint(x, y,  extrude, 0,0, 1);
+          }
+        }
+        // Caps along curved sections for solidity
+        for (let theta=-Math.PI/2; theta<=Math.PI/2; theta+=stepCurve){
+          const xo = t + r*Math.cos(theta);
+          const yo = (height/2)*Math.sin(theta);
+          const xi = t + Math.max(0,rInner)*Math.cos(theta);
+          const yi = (height/2 - t)*Math.sin(theta);
+          addPoint(xo, yo, -extrude, 0,0,-1);
+          addPoint(xo, yo,  extrude, 0,0, 1);
+          if (rInner>0){
+            addPoint(xi, yi, -extrude, 0,0,-1);
+            addPoint(xi, yi,  extrude, 0,0, 1);
+          }
+        }
+      
+        function mulRot([x,y,z], A, B){
+          // rotate around Y (A), then X (B)
+          const ca=Math.cos(A), sa=Math.sin(A);
+          const cb=Math.cos(B), sb=Math.sin(B);
+          // Y-rotation
+          let X =  ca*x + sa*z;
+          let Z = -sa*x + ca*z;
+          let Y = y;
+          // X-rotation
+          let Y2 = cb*Y - sb*Z;
+          let Z2 = sb*Y + cb*Z;
+          return [X,Y2,Z2];
+        }
+      
+        function project([x,y,z]){
+          const K1 = 20, dist = 40;
+          const ooz = 1/(z+dist);
+          const xp = Math.floor(W/2 + K1*ooz*x);
+          const yp = Math.floor(H/2 - K1*ooz*y*0.6);
+          return {xp, yp, ooz};
+        }
+      
+        function shade(n){
+          // simple Lambert with light pointing toward viewer (0,0,1)
+          const dot = Math.max(0, n[2]);
+          const ramp = " .:-=+*#%@";
+          return ramp[Math.floor(dot*(ramp.length-1))];
+        }
+      
+        function frame(){
+          if (auto && !dragging) { A += 0.01; B += 0.005; }
+          const buf = new Array(W*H).fill(' ');
+          const zbuf = new Float32Array(zbufSize);
+          zbuf.fill(0);
+      
+          for (const p of points){
+            const pos = mulRot(p.pos, A, B);
+            const nrm = mulRot(p.norm, A, B);
+            const pr = project(pos);
+            const idx = pr.xp + pr.yp*W;
+            if (pr.xp>=0 && pr.xp<W && pr.yp>=0 && pr.yp<H){
+              if (pr.ooz > zbuf[idx]){
+                zbuf[idx] = pr.ooz;
+                buf[idx] = shade(nrm);
               }
             }
           }
-          // Build output string with line breaks
-          let output = '';
-          for (let k = 0; k < b.length; k++) {
-            output += b[k];
-            if ((k + 1) % width === 0) output += '\n';
+      
+          // write lines
+          let outStr='';
+          for (let y=0;y<H;y++){
+            outStr += buf.slice(y*W, y*W+W).join('') + "\n";
           }
-          torusEl.textContent = output;
-          if (!dragging) {
-            A += 0.04;
-            B += 0.02;
-          }
+          out.textContent = outStr;
+          requestAnimationFrame(frame);
         }
-        // Draw initial frame and then update regularly
-        renderFrame();
-        setInterval(renderFrame, 50);
+      
+        // Drag-to-rotate
+        canvas.addEventListener('mousedown', e=>{ dragging=true; auto=false; lastX=e.clientX; lastY=e.clientY; });
+        window.addEventListener('mouseup', ()=> dragging=false);
+        window.addEventListener('mousemove', e=>{
+          if (!dragging) return;
+          const dx = (e.clientX-lastX)/120;
+          const dy = (e.clientY-lastY)/120;
+          A += dx; B += dy;
+          lastX = e.clientX; lastY = e.clientY;
+        });
+      
+        frame();
       }
 
       // Initialize site
