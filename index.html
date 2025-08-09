@@ -918,9 +918,8 @@
 
       // ==== ASCII 'D' viewer (draggable) ====
       function initDViewer() {
-        const canvas = document.getElementById('torus-canvas');
-        const out = document.getElementById('torus-output');
-        if (!canvas || !out) return;
+        const out = document.getElementById('torus-viewer');
+        if (!out) return;
       
         let dragging = false;
         let lastX = 0, lastY = 0;
