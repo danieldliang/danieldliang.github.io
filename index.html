@@ -1,117 +1,1024 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nighthaven AI – Customer-Centric Automation</title>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello, I’m Daniel Liang</title>
+    <style>
+      :root {
+        --bg-light: #ffffff;
+        --bg-dark: #0f172a;
+        --text-light: #1e293b;
+        --text-dark: #f1f5f9;
+        --border-light: #e2e8f0;
+        --border-dark: #334155;
+        --card-bg-light: rgba(255, 255, 255, 0.8);
+        --card-bg-dark: rgba(15, 23, 42, 0.8);
+        --accent: #7c3aed;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: var(--bg-light);
+        color: var(--text-light);
+        transition: background-color 2s ease, color 2s ease;
+      }
+      body.dark {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+      }
+      header {
+        padding: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+       /* Dark/light toggle button styling */
+       #theme-toggle {
+         /* Center the icon in a circular button with a transparent fill.
+            The button has only a border so the background does not
+            obscure the moon icon. */
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         width: 36px;
+         height: 36px;
+         border-radius: 50%;
+         border: 1px solid var(--border-light);
+         background: transparent;
+         cursor: pointer;
+         margin-right: 0.5rem;
+         padding: 0;
+         transition: background-color 0.3s, border-color 0.3s;
+         position: relative;
+       }
+       body.dark #theme-toggle {
+         border-color: var(--border-dark);
+         background: transparent;
+       }
+       #theme-toggle:hover {
+         background-color: var(--border-light);
+       }
+       body.dark #theme-toggle:hover {
+         background-color: var(--border-dark);
+       }
+       /* position is set on the same definition as the sizing above; no need to repeat */
+       #theme-toggle svg {
+         /* Overlay the sun and moon icons directly on top of each
+            other.  They inherit currentColor for stroke/fill and are
+            centered via absolute positioning.  Opacity transitions
+            handle the cross fade. */
+         position: absolute;
+         width: 20px;
+         height: 20px;
+         stroke: currentColor;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         transition: opacity 0.7s ease;
+       }
+       /* Sun/moon icon opacity transitions */
+       #icon-sun { opacity: 1; }
+       #icon-moon { opacity: 0; }
+       body.dark #icon-sun { opacity: 0; }
+       body.dark #icon-moon { opacity: 1; }
+      .hero-text {
+        /* .hero-text is deprecated; replaced by .hero-left for clarity. */
+      }
+      /* New hero layout splits the header into left (intro and chips) and right (torus viewer). */
+      .hero-left {
+        flex: 1;
+        max-width: 600px;
+        margin-right: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .hero-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 250px;
+      }
+      #torus-viewer {
+        font-family: monospace;
+        font-size: 0.6rem;
+        line-height: 0.6rem;
+        white-space: pre;
+        cursor: grab;
+        user-select: none;
+        border: 1px solid var(--border-light);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        background: var(--card-bg-light);
+      }
+      body.dark #torus-viewer {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      .chips {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 0.5rem;
+      }
+      .chips a {
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border-light);
+        background: var(--card-bg-light);
+        color: inherit;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+      body.dark .chips a {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      .chips a:hover {
+        background-color: var(--border-light);
+      }
+      body.dark .chips a:hover {
+        background-color: var(--border-dark);
+      }
 
-  <!-- Core stylesheet -->
-  <link rel="stylesheet" href="stuff/style.css">
+      /* Social icons in the footer */
+      .social-icons {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+      }
+      .social-icons a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .social-icons a:hover {
+        color: var(--accent);
+      }
 
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
-</head>
+      /* Video link styling: small pill buttons within video cards */
+      .video-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+      }
+      .video-links a {
+        padding: 0.15rem 0.4rem;
+        border: 1px solid var(--border-light);
+        border-radius: 0.25rem;
+        text-decoration: none;
+        color: inherit;
+        font-size: 0.75rem;
+        background: var(--card-bg-light);
+      }
+      body.dark .video-links a {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      .video-links a:hover {
+        background: var(--border-light);
+      }
+      body.dark .video-links a:hover {
+        background: var(--border-dark);
+      }
 
-<body>
-  <!-- Header with logo and navigation -->
-  <header class="site-header">
-    <div class="wrapper">
-      <a class="brand" href="#">Nighthaven AI</a>
-
-      <nav aria-label="Primary">
-        <button id="navBtn" class="nav-toggle" aria-controls="mainMenu" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          ☰
-        </button>
-
-        <ul id="mainMenu" class="nav-list">
-          <li><a href="#features">Features</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a class="cta" href="#demo">Get a Demo</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero section -->
-  <section class="hero">
-    <div class="wrapper grid-2col">
-      <div class="hero-text">
-        <h1>Your 24 / 7 AI-Powered<br><span>Customer Service Agent</span></h1>
-        <p>Reduce response times, boost satisfaction, and free your human team for higher-impact work. No code, no headaches.</p>
-        <a href="#demo" class="btn-primary">Request a Live Demo</a>
+      /* Moon icon fill and stroke for visibility */
+      /* The moon icon always has a white fill with a black stroke.  This
+         avoids a dark background on the icon and ensures it remains
+         visible in both light and dark modes. */
+      #icon-moon {
+        fill: #ffffff;
+        stroke: #000000;
+      }
+      body.dark #icon-moon {
+        fill: #ffffff;
+        stroke: #000000;
+      }
+      main {
+        flex: 1;
+        padding: 0 2rem 2rem;
+      }
+      section {
+        margin-bottom: 3rem;
+      }
+      h2 {
+        margin-bottom: 1rem;
+        border-bottom: 4px solid var(--accent);
+        width: fit-content;
+        font-size: 1.5rem;
+      }
+      .cards {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+      .card {
+        padding: 1rem;
+        border: 1px solid var(--border-light);
+        background: var(--card-bg-light);
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: box-shadow 0.3s;
+         cursor: pointer;
+      }
+      body.dark .card {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      .card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        background-color: var(--border-light);
+      }
+      body.dark .card:hover {
+        background-color: var(--border-dark);
+      }
+      #usaco-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      /* When the viewer is open, split container into two equal columns */
+      #usaco-container.viewer-open {
+        grid-template-columns: 1fr 1fr;
+      }
+      #usaco-list {
+        /* no explicit flex basis here; width will be managed by the grid */
+      }
+      #usaco-viewer {
+        border: 1px solid var(--border-light);
+        border-radius: 0.5rem;
+        display: none;
+        flex-direction: column;
+      }
+      body.dark #usaco-viewer {
+        border-color: var(--border-dark);
+      }
+      #viewer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--card-bg-light);
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--border-light);
+      }
+      body.dark #viewer-header {
+        background: var(--card-bg-dark);
+        border-bottom-color: var(--border-dark);
+      }
+      #viewer-header .viewer-controls {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+      }
+      #viewer-header input {
+        padding: 0.25rem;
+        border: 1px solid var(--border-light);
+        border-radius: 0.25rem;
+        width: 6rem;
+        background: inherit;
+        color: inherit;
+      }
+      body.dark #viewer-header input {
+        border-color: var(--border-dark);
+      }
+      #viewer-header button {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--border-light);
+        border-radius: 0.25rem;
+        background: var(--card-bg-light);
+        color: inherit;
+        cursor: pointer;
+      }
+      body.dark #viewer-header button {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      #viewer-header button:hover {
+        background: var(--border-light);
+      }
+      body.dark #viewer-header button:hover {
+        background: var(--border-dark);
+      }
+      #viewer-content {
+        flex: 1;
+        overflow: auto;
+        background: var(--bg-light);
+        padding: 1rem;
+        font-family: monospace;
+        font-size: 0.875rem;
+         /* Preserve spacing within code lines */
+         /* Each code span will have white-space: pre defined separately */
+      }
+      body.dark #viewer-content {
+        background: var(--bg-dark);
+      }
+      #viewer-content span.select-none {
+        user-select: none;
+        margin-right: 1rem;
+        color: var(--border-dark);
+      }
+      body.dark #viewer-content span.select-none {
+        color: var(--border-light);
+      }
+       /* Code viewer rows and code text */
+       #viewer-content .code-row {
+         display: flex;
+       }
+       #viewer-content .code {
+         white-space: pre;
+       }
+      mark {
+        background: yellow;
+        color: black;
+      }
+      footer {
+        padding: 1rem 2rem;
+        border-top: 1px solid var(--border-light);
+        font-size: 0.875rem;
+        color: var(--border-dark);
+      }
+      body.dark footer {
+        border-top-color: var(--border-dark);
+        color: var(--border-light);
+      }
+      /* Prism token colours for syntax highlighting */
+      /*
+       * To support syntax highlighting without relying on external CDNs,
+       * we embed PrismJS locally and define colours for its token classes.
+       * Colours roughly follow the palette used throughout the page.
+       */
+      .token.comment { color: var(--border-dark); }
+      body.dark .token.comment { color: var(--border-light); }
+      .token.string { color: #10b981; }
+      .token.keyword { color: #8b5cf6; }
+      .token.number { color: #f97316; }
+      .token.function { color: #60a5fa; }
+      .token.class-name { color: #8b5cf6; }
+      .token.operator, .token.punctuation { color: inherit; }
+      /* USACO list rows and buttons styling */
+      #usaco-list .row {
+        margin-bottom: 0.5rem;
+        border: 1px solid var(--border-light);
+        background: var(--card-bg-light);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      body.dark #usaco-list .row {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      #usaco-list .row:last-child {
+        margin-bottom: 0;
+      }
+      #usaco-list .buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+      #usaco-list .buttons button,
+      #usaco-list .buttons a {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--border-light);
+        border-radius: 0.25rem;
+        background: var(--card-bg-light);
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+      body.dark #usaco-list .buttons button,
+      body.dark #usaco-list .buttons a {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      #usaco-list .buttons button:hover,
+      #usaco-list .buttons a:hover {
+        background: var(--border-light);
+      }
+      body.dark #usaco-list .buttons button:hover,
+      body.dark #usaco-list .buttons a:hover {
+        background: var(--border-dark);
+      }
+    </style>
+    <!-- PrismJS scripts removed: using custom highlighter instead -->
+  </head>
+  <body>
+    <header>
+      <div class="hero-left">
+        <h1>Hello, I’m Daniel Liang</h1>
+        <p>I'm a competitive programmer, researcher, runner, and some more! Interested in machine learning and its applications in healthcare.</p>
+        <div class="chips">
+          <button id="theme-toggle" aria-label="Toggle dark/light mode">
+            <!-- Sun Icon -->
+            <svg id="icon-sun" viewBox="0 0 24 24" stroke-width="2" fill="none">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M17.36 17.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M17.36 6.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg id="icon-moon" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+          </button>
+          <a href="#blog">Blog</a>
+          <a href="#usaco">USACO</a>
+          <a href="#videos">Videos</a>
+          <a href="#misc">Miscellaneous</a>
+        </div>
       </div>
-
-      <picture class="hero-image">
-        <img src="stuff/images/very_real_portrait.png" alt="Illustration of Nighthaven AI agent">
-      </picture>
-    </div>
-  </section>
-
-  <!-- Feature highlights -->
-  <section id="features" class="features">
-    <div class="wrapper grid-3col">
-      <article class="feature-card">
-        <h3>Multichannel Support</h3>
-        <p>Chat, email, SMS, and social—all in one dashboard.</p>
-      </article>
-
-      <article class="feature-card">
-        <h3>Natural Conversations</h3>
-        <p>Powered by advanced language models that understand nuance and intent.</p>
-      </article>
-
-      <article class="feature-card">
-        <h3>Instant Insights</h3>
-        <p>Real-time analytics highlight common pain points and FAQs.</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- Demo call-to-action -->
-  <section id="demo" class="cta-banner">
-    <div class="wrapper">
-      <h2>See Nighthaven AI in Action</h2>
-      <p>Schedule a 15-minute walkthrough with one of our engineers—no strings attached.</p>
-      <a href="#contact" class="btn-secondary">Book Now</a>
-    </div>
-  </section>
-
-  <!-- Contact form and footer -->
-  <footer id="contact" class="site-footer">
-    <div class="wrapper grid-2col">
-      <form id="contactForm" class="contact-form" autocomplete="off" novalidate>
-        <h3>Drop Us a Line</h3>
-
-        <label>
-          <span>Name</span>
-          <input type="text" name="name" required>
-        </label>
-
-        <label>
-          <span>Email</span>
-          <input type="email" name="email" required>
-        </label>
-
-        <label>
-          <span>Message</span>
-          <textarea name="message" rows="4" required></textarea>
-        </label>
-
-        <button type="submit" class="btn-primary">Send Message</button>
-        <p id="formMsg" class="form-msg" aria-live="polite"></p>
-      </form>
-
-      <div class="footer-meta">
-        <p>© <span id="year"></span> Nighthaven AI. All rights reserved.</p>
-        <p><strong>Email:</strong> hello@nighthaven.ai</p>
-        <p>Made by the Nighthaven team.</p>
+      <div class="hero-right">
+        <pre id="torus-viewer"></pre>
       </div>
-    </div>
-  </footer>
+    </header>
+    <main>
+      <!-- Blog Section -->
+      <section id="blog">
+        <h2>Blog</h2>
+        <div class="cards" id="blog-cards">
+          <!-- Blog cards will be injected by script -->
+        </div>
+      </section>
+      <!-- USACO Section -->
+      <section id="usaco">
+        <h2>Algorithms (C++)</h2>
+        <p>Tip: Click 'View' to open code side‑by‑side. 'Close' returns to the full‑width list.</p>
+        <div id="usaco-container">
+          <!-- Algorithm list column -->
+          <div id="usaco-list">
+            <!-- Items inserted via script -->
+          </div>
+          <!-- Viewer column (hidden by default) -->
+          <div id="usaco-viewer">
+            <div id="viewer-header">
+              <span id="viewer-filename"></span>
+              <div class="viewer-controls">
+                <input id="viewer-search" type="text" placeholder="Search" />
+                <button id="search-prev">Prev</button>
+                <button id="search-next">Next</button>
+                <span id="search-count"></span>
+                <button id="copy-code">Copy</button>
+                <button id="close-viewer">Close</button>
+              </div>
+            </div>
+            <div id="viewer-content">
+              <!-- Highlighted code inserted here -->
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Videos Section -->
+      <section id="videos">
+        <h2>Videos</h2>
+        <div class="cards" id="video-cards">
+          <!-- Video cards will be injected by script -->
+        </div>
+      </section>
+      <!-- Misc Section -->
+      <section id="misc">
+        <h2>Miscellaneous</h2>
+        <div class="cards" id="misc-cards">
+          <!-- Misc cards will be injected by script -->
+        </div>
+      </section>
+    </main>
+    <footer>
+      <p>© <span id="current-year"></span> Daniel Liang</p>
+      <div class="social-icons">
+        <a href="https://github.com/danieldliang" target="_blank" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M12 .296c-6.626 0-12 5.373-12 12 0 5.304 3.438 9.8 8.205 11.387.6.111.82-.261.82-.577 0-.285-.011-1.04-.016-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.758-1.333-1.758-1.087-.743.084-.728.084-.728 1.205.084 1.839 1.236 1.839 1.236 1.07 1.834 2.809 1.304 3.495.997.108-.775.418-1.305.762-1.605-2.665-.304-5.466-1.332-5.466-5.932 0-1.31.469-2.381 1.236-3.221-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.959-.267 1.987-.399 3.008-.404 1.02.005 2.049.137 3.009.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.653.244 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.803 5.625-5.475 5.922.43.371.823 1.103.823 2.222 0 1.606-.015 2.903-.015 3.296 0 .319.218.694.825.576C20.565 22.092 24 17.598 24 12.296c0-6.627-5.373-12-12-12" />
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/in/daniel-liang-69298a257/" target="_blank" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M22.225 0H1.771C.792 0 0 .771 0 1.708v20.536C0 23.23.792 24 1.771 24h20.451C23.207 24 24 23.23 24 22.244V1.708C24 .771 23.207 0 22.225 0zM7.645 20.452H3.979V9.001h3.666v11.451zm-1.833-13.07a2.071 2.071 0 110-4.142 2.071 2.071 0 010 4.142zm14.635 13.07h-3.554v-5.569c0-1.328-.027-3.036-1.852-3.036-1.853 0-2.136 1.445-2.136 2.939v5.666h-3.553V9.001h3.414v1.561h.049c.476-.901 1.637-1.852 3.372-1.852 3.602 0 4.267 2.368 4.267 5.448v6.294z" />
+          </svg>
+        </a>
+      </div>
+    </footer>
+    <script>
+      // Helper to read text file relative to the site. If fetch is not permitted (e.g. local file protocol),
+      // falls back to embedding raw content compiled below. This ensures the viewer works locally.
+      const FILE_CACHE = {};
+      // Preload algorithm file contents as raw strings. They will be filled by inline script later.
 
-  <!-- Core scripts -->
-  <script src="stuff/script.js" defer></script>
-</body>
+      // Embedded lists of blog posts, videos and miscellaneous items extracted from the
+      // original site. Embedding these here avoids relying on fetch() to load
+      // file:// URLs, which can fail in some browsers. Each entry contains a
+      // title, a short snippet and a URL to the full page or resource.
+      const BLOG_POSTS = [
+        {
+          title: 'Fourth Post: 9/2/2024',
+          snippet: "Alrighty guys, school starts tomorrow. Here's a recap of how my summer went: 1. Attended Garcia. Was a really fun program...",
+          url: 'blog/fourth-post.html'
+        },
+        {
+          title: 'Third Post: 4/19/2024',
+          snippet: "Hello everyone. I remembered I had a blog. Anyways, spring break has begun! Here's a recap of how my junior yr's been going...",
+          url: 'blog/third-post.html'
+        },
+        {
+          title: 'Second Post: 2/9/2024',
+          snippet: 'cool stuff',
+          url: 'blog/second-post.html'
+        },
+        {
+          title: 'First Post: 2/9/2024',
+          snippet: 'First Post! YAY! Hopefully I keep this active. Happy Chinese New Year!',
+          url: 'blog/first-post.html'
+        }
+      ];
+      const VIDEO_ITEMS = [
+        {
+          title: 'Sample Video',
+          snippet: 'A short video demonstration.',
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          linkTitles: ['Watch']
+        }
+      ];
+      const MISC_ITEMS = [];
+    </script>
+    <script>
+      // Insert current year in footer
+      document.getElementById('current-year').textContent = new Date().getFullYear();
+
+       // Theme persistence
+       const bodyEl = document.body;
+       const themeToggle = document.getElementById('theme-toggle');
+       // Apply stored theme on load. If no preference stored, follow system preference.
+       const storedTheme = localStorage.getItem('theme');
+       if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+         bodyEl.classList.add('dark');
+       }
+       // Toggle dark mode on click and persist selection
+       themeToggle.addEventListener('click', () => {
+         bodyEl.classList.toggle('dark');
+         const newTheme = bodyEl.classList.contains('dark') ? 'dark' : 'light';
+         localStorage.setItem('theme', newTheme);
+       });
+
+      // Simple C++ syntax highlighter. This function escapes HTML and then wraps keywords, strings, comments, numbers and types with spans.
+      function highlightCpp(raw) {
+        // Escape HTML special characters first
+        let escaped = raw
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        // Highlight strings (double or single quotes)
+        escaped = escaped.replace(/("([^"\\]|\\.)*"|'([^'\\]|\\.)*')/g, '<span class="text-emerald-500">$1</span>');
+        // Highlight comments (//... and /* ... */)
+        escaped = escaped.replace(/(\/\/.*?$|\/\*[\s\S]*?\*\/)/gm, '<span class="text-gray-500">$1</span>');
+        // Highlight keywords
+        const keywordRegex = /\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b/g;
+        escaped = escaped.replace(keywordRegex, '<span class="text-purple-500">$1</span>');
+        // Highlight built-in types (common STL containers etc.)
+        const typeRegex = /\b(vector|string|map|set|unordered_map|unordered_set|pair|queue|stack|priority_queue|list|deque|array|tuple)\b/g;
+        escaped = escaped.replace(typeRegex, '<span class="text-blue-400">$1</span>');
+        // Highlight numbers
+        escaped = escaped.replace(/\b(\d+)(\.?\d*)\b/g, '<span class="text-orange-500">$1$2</span>');
+        return escaped;
+      }
+
+      // Custom C++ highlighter used by the code viewer.  It escapes HTML
+      // special characters and wraps strings, comments, keywords,
+      // container names and numeric literals with <span class="token ...">
+      // elements.  Token classes correspond to CSS rules defined in
+      // the style section of this page.  This function does not rely
+      // on any external libraries.
+      function simpleHighlightCpp(raw) {
+        // Escape HTML special characters
+        let escaped = raw
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        // Strings (double or single quoted)
+        escaped = escaped.replace(/("([^"\\]|\\.)*"|'([^'\\]|\\.)*')/g, '<span class="token string">$1</span>');
+        // Comments (// and /* */)
+        escaped = escaped.replace(/(\/\/.*?$|\/\*[\s\S]*?\*\/)/gm, '<span class="token comment">$1</span>');
+        // Keywords
+        const keywordRegex = /\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b/g;
+        escaped = escaped.replace(keywordRegex, '<span class="token keyword">$1</span>');
+        // Common STL container names and other types
+        const typeRegex = /\b(vector|string|map|set|unordered_map|unordered_set|pair|queue|stack|priority_queue|list|deque|array|tuple)\b/g;
+        escaped = escaped.replace(typeRegex, '<span class="token class-name">$1</span>');
+        // Numeric literals (integers and floats)
+        escaped = escaped.replace(/\b(\d+)(\.\d+)?\b/g, '<span class="token number">$1$2</span>');
+        return escaped;
+      }
+
+      // Build blog cards from embedded list
+      function loadBlog() {
+        const container = document.getElementById('blog-cards');
+        BLOG_POSTS.forEach(post => {
+          const a = document.createElement('a');
+          a.href = post.url;
+          a.target = '_blank';
+          a.className = 'card';
+          const h3 = document.createElement('h3');
+          h3.textContent = post.title;
+          const p = document.createElement('p');
+          p.textContent = post.snippet;
+          a.appendChild(h3);
+          a.appendChild(p);
+          container.appendChild(a);
+        });
+      }
+
+      // Build video cards from embedded list
+      function loadVideos() {
+        const container = document.getElementById('video-cards');
+        VIDEO_ITEMS.forEach(item => {
+          // Create a card container instead of making the entire card a link. This
+          // allows us to add small link buttons inside while keeping the card
+          // itself purely informational.
+          const card = document.createElement('div');
+          card.className = 'card';
+          // Title
+          const h3 = document.createElement('h3');
+          h3.textContent = item.title;
+          card.appendChild(h3);
+          // Optional snippet/description
+          if (item.snippet) {
+            const p = document.createElement('p');
+            p.textContent = item.snippet;
+            card.appendChild(p);
+          }
+          // Links container with minimalistic buttons
+          const linksDiv = document.createElement('div');
+          linksDiv.className = 'video-links';
+          // Support multiple links per item by allowing item.url to be a string or an array
+          const urls = Array.isArray(item.url) ? item.url : [item.url];
+          urls.forEach((link, index) => {
+            const linkEl = document.createElement('a');
+            linkEl.href = link;
+            linkEl.target = '_blank';
+            linkEl.textContent = item.linkTitles && item.linkTitles[index] ? item.linkTitles[index] : 'Link';
+            linksDiv.appendChild(linkEl);
+          });
+          card.appendChild(linksDiv);
+          container.appendChild(card);
+        });
+      }
+
+      // Build miscellaneous cards from embedded list
+      function loadMisc() {
+        const container = document.getElementById('misc-cards');
+        MISC_ITEMS.forEach(item => {
+          const a = document.createElement('a');
+          a.href = item.url;
+          a.target = '_blank';
+          a.className = 'card';
+          const h3 = document.createElement('h3');
+          h3.textContent = item.title;
+          const p = document.createElement('p');
+          p.textContent = item.snippet;
+          a.appendChild(h3);
+          a.appendChild(p);
+          container.appendChild(a);
+        });
+      }
+
+      // Build algorithm list and set up viewer
+      function buildUsacoList(files) {
+        const listEl = document.getElementById('usaco-list');
+        files.forEach(file => {
+          const row = document.createElement('div');
+          row.className = 'row';
+          const nameSpan = document.createElement('span');
+          nameSpan.className = '';
+          nameSpan.textContent = file;
+          const btnContainer = document.createElement('div');
+          btnContainer.className = 'buttons';
+          const viewBtn = document.createElement('button');
+          viewBtn.textContent = 'View';
+          viewBtn.className = '';
+          viewBtn.addEventListener('click', () => openViewer(file));
+          const dlLink = document.createElement('a');
+          dlLink.textContent = 'Download';
+          dlLink.href = 'original/stuff/usaco/algos/' + file;
+          dlLink.setAttribute('download', file);
+          dlLink.className = '';
+          btnContainer.appendChild(viewBtn);
+          btnContainer.appendChild(dlLink);
+          row.appendChild(nameSpan);
+          row.appendChild(btnContainer);
+          listEl.appendChild(row);
+        });
+      }
+
+      // Viewer state
+      let currentHits = [];
+      let currentHitIndex = 0;
+      // Raw code currently loaded in viewer. Used to re-highlight after search.
+      let currentRaw = '';
+      function renderHits() {
+        const countEl = document.getElementById('search-count');
+        if (currentHits.length) {
+          countEl.textContent = `${currentHitIndex + 1}/${currentHits.length}`;
+        } else {
+          countEl.textContent = '0/0';
+        }
+      }
+       async function fetchFile(file) {
+         // Try to fetch the C++ source file from the original folder.  When
+         // the site is served over HTTP this will succeed.  If the fetch
+         // fails (for example when viewing locally via file://), fall back
+         // to a cached base64‑embedded version.  The cache contains raw
+         // source code without any HTML markup.
+         try {
+           const res = await fetch('original/stuff/usaco/algos/' + file);
+           if (res.ok) {
+             return await res.text();
+           }
+         } catch (_) {}
+         return FILE_CACHE[file] || '';
+       }
+      async function openViewer(file) {
+        // Show viewer and update layout classes so the list and viewer share the space on wider screens
+        const viewer = document.getElementById('usaco-viewer');
+        const container = document.getElementById('usaco-container');
+        viewer.style.display = 'flex';
+        container.classList.add('viewer-open');
+        // On small screens, scroll to viewer
+        viewer.scrollIntoView({ behavior: 'smooth' });
+        // Set filename header
+        document.getElementById('viewer-filename').textContent = file;
+        // Load file text
+        currentRaw = await fetchFile(file);
+        // Clear search state
+        currentHits = [];
+        currentHitIndex = 0;
+        document.getElementById('viewer-search').value = '';
+        renderHits();
+        // Render highlighted content
+        renderViewer();
+      }
+
+      // Basic syntax highlighter for C++ used in the viewer.  This
+      // function escapes HTML and highlights strings, comments,
+      // keywords, common STL types and numeric literals.  It returns
+      // an HTML string containing <span> tags with Prism‑like
+      // classes (token string, token comment, token keyword,
+      // token class-name and token number).  Because highlighting
+      // occurs on the raw source prior to inserting any markup into
+      // the DOM, it avoids re-highlighting the markup itself.
+      function simpleHighlightCpp(raw) {
+        let escaped = raw
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        // Strings (double or single quoted)
+        escaped = escaped.replace(/("([^"\\]|\\.)*"|'([^'\\]|\\.)*')/g, '<span class="token string">$1</span>');
+        // Comments (// and /* */)
+        escaped = escaped.replace(/(\/\/.*?$|\/\*[\s\S]*?\*\/)/gm, '<span class="token comment">$1</span>');
+        // Keywords
+        const keywordRegex = /\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b/g;
+        escaped = escaped.replace(keywordRegex, '<span class="token keyword">$1</span>');
+        // Common STL container and type names -> class-name
+        const typeRegex = /\b(vector|string|map|set|unordered_map|unordered_set|pair|queue|stack|priority_queue|list|deque|array|tuple)\b/g;
+        escaped = escaped.replace(typeRegex, '<span class="token class-name">$1</span>');
+        // Numeric literals (integers and floats)
+        escaped = escaped.replace(/\b(\d+)(\.\d+)?\b/g, '<span class="token number">$1$2</span>');
+        return escaped;
+      }
+
+      // Render the viewer content using PrismJS.  It applies syntax
+      // highlighting to the raw source via Prism.highlight(), splits
+      // the highlighted string into lines, and wraps each with a
+      // line-number span.  Because Prism inserts its own markup, we
+      // do not escape HTML here; Prism escapes special characters as
+      // necessary.  Called on initial load and whenever the search
+      // state resets.
+      function renderViewer() {
+        const contentEl = document.getElementById('viewer-content');
+        // Highlight the raw C++ source using Prism.  If Prism is not
+        // loaded, fall back to simply escaping HTML to avoid
+        // displaying markup.  Prism.highlight() returns an HTML
+        // string with <span class="token ..."> tags for syntax.
+        // Use the custom highlighter to produce an HTML string containing
+        // escaped and highlighted code.  simpleHighlightCpp() escapes
+        // any HTML and inserts <span class="token ..."> tags.
+        // Escape raw source for safe HTML display.  Syntax highlighting
+        // can introduce unexpected markup if the highlighter fails,
+        // so we stick to plain code here.  Replace special characters
+        // with HTML entities before splitting into lines.
+        const escaped = currentRaw
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        const lines = escaped.split(/\n/);
+        const htmlLines = lines.map((line, idx) => {
+          // Build each line with a non-selectable line number and the code itself.
+          return '<div class="code-row"><span class="select-none">' + (idx + 1) + '</span><span class="code">' + line + '</span></div>';
+        });
+        contentEl.innerHTML = htmlLines.join('');
+      }
+      // Close viewer
+      document.getElementById('close-viewer').addEventListener('click', () => {
+        const viewer = document.getElementById('usaco-viewer');
+        const container = document.getElementById('usaco-container');
+        viewer.style.display = 'none';
+        container.classList.remove('viewer-open');
+      });
+      // Search functionality
+      document.getElementById('viewer-search').addEventListener('input', () => {
+        const query = document.getElementById('viewer-search').value.trim();
+        // Reset the viewer to its highlighted state before applying search marks
+        renderViewer();
+        currentHits = [];
+        currentHitIndex = 0;
+        if (query) {
+          const contentEl = document.getElementById('viewer-content');
+          const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+          // iterate text nodes inside viewer and highlight matches
+          const walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT, null);
+          while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const parent = node.parentElement;
+            const matches = [...node.textContent.matchAll(regex)];
+            if (matches.length) {
+              let lastIndex = 0;
+              const fragments = [];
+              matches.forEach(m => {
+                const start = m.index;
+                const end = start + m[0].length;
+                fragments.push(document.createTextNode(node.textContent.slice(lastIndex, start)));
+                const mark = document.createElement('mark');
+                mark.className = '';
+                mark.textContent = node.textContent.slice(start, end);
+                fragments.push(mark);
+                currentHits.push(mark);
+                lastIndex = end;
+              });
+              fragments.push(document.createTextNode(node.textContent.slice(lastIndex)));
+              fragments.forEach(f => parent.insertBefore(f, node));
+              parent.removeChild(node);
+            }
+          }
+          if (currentHits.length) {
+            currentHitIndex = 0;
+            scrollToHit(currentHits[currentHitIndex]);
+          }
+        }
+        renderHits();
+      });
+      function scrollToHit(el) {
+        const viewerContent = document.getElementById('viewer-content');
+        const rect = el.getBoundingClientRect();
+        const containerRect = viewerContent.getBoundingClientRect();
+        viewerContent.scrollTop += rect.top - containerRect.top - containerRect.height / 2 + el.offsetHeight;
+      }
+      document.getElementById('search-next').addEventListener('click', () => {
+        if (!currentHits.length) return;
+        currentHitIndex = (currentHitIndex + 1) % currentHits.length;
+        scrollToHit(currentHits[currentHitIndex]);
+        renderHits();
+      });
+      document.getElementById('search-prev').addEventListener('click', () => {
+        if (!currentHits.length) return;
+        currentHitIndex = (currentHitIndex - 1 + currentHits.length) % currentHits.length;
+        scrollToHit(currentHits[currentHitIndex]);
+        renderHits();
+      });
+      // Copy code button
+      document.getElementById('copy-code').addEventListener('click', async () => {
+        const filename = document.getElementById('viewer-filename').textContent;
+        const raw = await fetchFile(filename);
+        try {
+          await navigator.clipboard.writeText(raw);
+          alert('Code copied to clipboard');
+        } catch (err) {
+          console.error(err);
+        }
+      });
+
+      // === ASCII Torus Viewer ===
+      // Build and animate a 3D torus in ASCII art.  The torus is drawn into
+      // #torus-viewer using a framebuffer and z‑buffer similar to the
+      // classic donut.c program.  When the user drags inside the torus
+      // element, the rotation angles A (vertical tilt) and B (horizontal
+      // rotation) update accordingly.  When not dragging, the torus rotates
+      // slowly on its own.  The viewer is initialised once the page has
+      // loaded via initTorus().
+      function initTorus() {
+        const torusEl = document.getElementById('torus-viewer');
+        if (!torusEl) return;
+        let A = 0;
+        let B = 0;
+        let dragging = false;
+        let lastX = 0;
+        let lastY = 0;
+        torusEl.addEventListener('mousedown', (e) => {
+          dragging = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          torusEl.style.cursor = 'grabbing';
+        });
+        document.addEventListener('mousemove', (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - lastX;
+          const dy = e.clientY - lastY;
+          // Adjust sensitivity: smaller multiplier for smoother rotation
+          B += dx * 0.005;
+          A += dy * 0.005;
+          lastX = e.clientX;
+          lastY = e.clientY;
+        });
+        document.addEventListener('mouseup', () => {
+          dragging = false;
+          torusEl.style.cursor = 'grab';
+        });
+        function renderFrame() {
+          const width = 60;
+          const height = 24;
+          const b = new Array(width * height).fill(' ');
+          const z = new Array(width * height).fill(0);
+          const cosA = Math.cos(A);
+          const sinA = Math.sin(A);
+          const cosB = Math.cos(B);
+          const sinB = Math.sin(B);
+          for (let j = 0; j < 6.28; j += 0.07) {
+            const ct = Math.cos(j);
+            const st = Math.sin(j);
+            for (let i = 0; i < 6.28; i += 0.02) {
+              const sp = Math.sin(i);
+              const cp = Math.cos(i);
+              const h = ct + 2;
+              const D = 1 / (sp * h * sinA + st * cosA + 5);
+              const t = sp * h * cosA - st * sinA;
+              const x = Math.floor(width / 2 + (width / 4) * D * (cp * h * cosB - t * sinB));
+              const y = Math.floor(height / 2 + (height / 2) * D * (cp * h * sinB + t * cosB));
+              const idx = x + width * y;
+              const luminance = Math.floor(8 * ((st * sinA - sp * ct * cosA) * cosB - sp * ct * sinA - st * cosA - cp * ct * sinB));
+              if (y >= 0 && y < height && x >= 0 && x < width && D > z[idx]) {
+                z[idx] = D;
+                const chars = '.,-~:;=!*#$@';
+                b[idx] = chars[luminance > 0 ? luminance : 0];
+              }
+            }
+          }
+          // Build output string with line breaks
+          let output = '';
+          for (let k = 0; k < b.length; k++) {
+            output += b[k];
+            if ((k + 1) % width === 0) output += '\n';
+          }
+          torusEl.textContent = output;
+          if (!dragging) {
+            A += 0.04;
+            B += 0.02;
+          }
+        }
+        // Draw initial frame and then update regularly
+        renderFrame();
+        setInterval(renderFrame, 50);
+      }
+
+      // Initialize site
+      async function initSite() {
+        // Preload algorithm files into cache (for offline fallback). The following lines are
+        // auto-generated to embed file names and base64-encoded contents. Each entry populates
+        // FILE_CACHE so that the viewer can still display code when fetch() is disallowed.
+        const algoFiles = ["bellmanford.cpp", "benqsmodintshort.cpp", "djikstras.cpp", "dsu.cpp", "eulertour.cpp", "floydwarshall.cpp", "modinved.cpp", "rollingandfasthash.cpp", "segtree.cpp", "toposort.cpp"];
+        FILE_CACHE['bellmanford.cpp'] = atob('Ly8gVGFrZW4gYW5kIGVkaXRlZCBvZmYgb2YgR0ZHcwp2b2lkIEJlbGxtYW5Gb3JkKGludCBncmFwaFtdWzNdLCBpbnQgViwgaW50IEUsCiAgICAgICAgICAgICAgICAgaW50IHNyYykKewogICAgaW50IGRpc1tWXTsKICAgIGZvciAoaW50IGkgPSAwOyBpIDwgVjsgaSsrKQogICAgICAgIGRpc1tpXSA9IElOVF9NQVg7CiAKICAgIGRpc1tzcmNdID0gMDsKIAogICAgZm9yIChpbnQgaSA9IDA7IGkgPCBWIC0gMTsgaSsrKSB7CiAgICAgICAgZm9yIChpbnQgaiA9IDA7IGogPCBFOyBqKyspIHsKICAgICAgICAgICAgaWYgKGRpc1tncmFwaFtqXVswXV0gIT0gSU5UX01BWCAmJiBkaXNbZ3JhcGhbal1bMF1dICsgZ3JhcGhbal1bMl0gPAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGlzW2dyYXBoW2pdWzFdXSkKICAgICAgICAgICAgICAgIGRpc1tncmFwaFtqXVsxXV0gPSAKICAgICAgICAgICAgICAgICAgZGlzW2dyYXBoW2pdWzBdXSArIGdyYXBoW2pdWzJdOwogICAgICAgIH0KICAgIH0KIAogICAgZm9yIChpbnQgaSA9IDA7IGkgPCBFOyBpKyspIHsKICAgICAgICBpbnQgeCA9IGdyYXBoW2ldWzBdOwogICAgICAgIGludCB5ID0gZ3JhcGhbaV1bMV07CiAgICAgICAgaW50IHdlaWdodCA9IGdyYXBoW2ldWzJdOwogICAgICAgIGlmIChkaXNbeF0gIT0gSU5UX01BWCAmJgogICAgICAgICAgICAgICAgICAgZGlzW3hdICsgd2VpZ2h0IDwgZGlzW3ldKQogICAgICAgICAgICBjb3V0IDw8ICJHcmFwaCBjb250YWlucyBuZWdhdGl2ZSB3ZWlnaHQgY3ljbGUiIDw8IGVuZGw7CiAgICB9CiAKICAgIGNvdXQgPDwgIlZlcnRleCBEaXN0YW5jZSBmcm9tIFNvdXJjZSIgPDwgZW5kbDsKICAgIGZvciAoaW50IGkgPSAwOyBpIDwgVjsgaSsrKQogICAgICAgIGNvdXQgPDwgYSA8PCAiXHRcdCIgPDwgZGlzW2ldIDw8IGVuZGw7Cn0K');
+        FILE_CACHE['benqsmodintshort.cpp'] = atob('Ly8gU291cmNlOiBCZW4gUWkKCi8qKgogKiBEZXNjcmlwdGlvbjogTW9kdWxhciBhcml0aG1ldGljLiBBc3N1bWVzICRNT0QkIGlzIHByaW1lLgogKiBTb3VyY2U6IEtBQ1RMCiAqIFZlcmlmaWNhdGlvbjogaHR0cHM6Ly9vcGVuLmthdHRpcy5jb20vcHJvYmxlbXMvbW9kdWxhcmFyaXRobWV0aWMKICogVXNhZ2U6IG1pIGEgPSBNT0QrNTsgaW52KGEpOyAvLyA0MDAwMDAwMDMKICovCgp0ZW1wbGF0ZTxpbnQgTU9ELCBpbnQgUlQ+IHN0cnVjdCBtaW50IHsKCXN0YXRpYyBjb25zdCBpbnQgbW9kID0gTU9EOwoJc3RhdGljIGNvbnN0ZXhwciBtaW50IHJ0KCkgeyByZXR1cm4gUlQ7IH0gLy8gcHJpbWl0aXZlIHJvb3QKIAlpbnQgdjsgCiAJZXhwbGljaXQgb3BlcmF0b3IgaW50KCkgY29uc3QgeyByZXR1cm4gdjsgfSAKCW1pbnQoKTp2KDApIHt9CgltaW50KGxsIF92KTp2KGludChfdiVNT0QpKSB7IHYgKz0gKHY8MCkqTU9EOyB9CgltaW50JiBvcGVyYXRvcis9KG1pbnQgbykgeyAKCQlpZiAoKHYgKz0gby52KSA+PSBNT0QpIHYgLT0gTU9EOyAKCQlyZXR1cm4gKnRoaXM7IH0KCW1pbnQmIG9wZXJhdG9yLT0obWludCBvKSB7IAoJCWlmICgodiAtPSBvLnYpIDwgMCkgdiArPSBNT0Q7IAoJCXJldHVybiAqdGhpczsgfQoJbWludCYgb3BlcmF0b3IqPShtaW50IG8pIHsgCgkJdiA9IGludCgobGwpdipvLnYlTU9EKTsgcmV0dXJuICp0aGlzOyB9CglmcmllbmQgbWludCBwb3cobWludCBhLCBsbCBwKSB7IGFzc2VydChwID49IDApOwoJCXJldHVybiBwPT0wPzE6cG93KGEqYSxwLzIpKihwJjE/YToxKTsgfQoJZnJpZW5kIG1pbnQgaW52KG1pbnQgYSkgeyBhc3NlcnQoYS52ICE9IDApOyByZXR1cm4gcG93KGEsTU9ELTIpOyB9CglmcmllbmQgbWludCBvcGVyYXRvcisobWludCBhLCBtaW50IGIpIHsgcmV0dXJuIGEgKz0gYjsgfQoJZnJpZW5kIG1pbnQgb3BlcmF0b3ItKG1pbnQgYSwgbWludCBiKSB7IHJldHVybiBhIC09IGI7IH0KCWZyaWVuZCBtaW50IG9wZXJhdG9yKihtaW50IGEsIG1pbnQgYikgeyByZXR1cm4gYSAqPSBiOyB9Cn07CnVzaW5nIG1pID0gbWludDwoaW50KTFlOSs3LCA1PjsKdXNpbmcgdm1pID0gdmVjdG9yPG1pPjsK');
+        FILE_CACHE['djikstras.cpp'] = atob('Ly8gdG9vayBhbmQgZWRpdGVkIGZyb20gR0ZHcwppbnQgbWFpbigpIHsKCXByaW9yaXR5X3F1ZXVlPHBhaXI8aW50LCBpbnQ+LCB2ZWN0b3I8cGFpcjxpbnQsIGludD4+LCBncmVhdGVyPHBhaXI8aW50LCBpbnQ+PiA+IHBxOyAvLyBiZnMgdXNlcyBxdWV1ZSwgZGZzIHVzZXMgc3RhY2ssIGRqaWtzdHJhJ3MgdXNlcyBwcQoKCXZlY3RvcjxpbnQ+IGRpc3QoViwgSU5UX01BWCk7IC8vIGRpc3RhbmNlIHZlY3RvciAobWFwcyBub2RlIElELCBnaXZlbiBieSB2ZWN0b3IgaW5kZXgsIHRvIHNob3J0ZXN0IGRpc3RhbmNlIGJldHdlZW4gdGhlIHNvdXJjZSBub2RlIHRvIHRoZSBub2RlKQoKCXBxLnB1c2gobWFrZV9wYWlyKDAsIHNyYykpOwoJZGlzdFtzcmNdID0gMDsKCgl3aGlsZSAoIXBxLmVtcHR5KCkpIHsgLy8gbm90aWNlIHRoZSBwYXR0ZXJuIGJldHdlZW4gZGppa3N0cmEncyBhbmQgYmZzLCBkZnMKCQlpbnQgdXcgPSBwcS50b3AoKS5maXJzdCwgdSA9IHBxLnRvcCgpLnNlY29uZDsKCQlwcS5wb3AoKTsKCgkJaWYgKHV3ICE9IGRpc3RbdV0pIGNvbnRpbnVlOwoJCQoJCWZvciAoY29uc3QgYXV0byYgbmV4dDogYWRqW3VdKSB7IC8vIGFkaiBpcyBhIHZlY3RvciB3aGljaCBtYXBzIG5vZGUgSUQgKGFzIGluZGV4KSB0byBwYWlyPGludCAodGhpcyBpcyB0aGUgbmV4dCBhZGphY2VudCBub2RlIElEKSwgaW50ICh3ZWlnaHQgb2YgZWRnZSB3aGljaCBjb25uZWN0cyBjdXJyZW50IG5vZGUgdG8gc2FpZCBhZGphY2VudCBub2RlKT4KCQkJaW50IHYgPSBuZXh0LmZpcnN0OwoJCQlpbnQgd2VpZ2h0ID0gbmV4dC5zZWNvbmQ7CgoJCQlpZiAoZGlzdFt2XSA+IGRpc3RbdV0gKyB3ZWlnaHQpIHsKCQkJCWRpc3Rbdl0gPSBkaXN0W3VdICsgd2VpZ2h0OyAvLyB1cGRhdGUgbmV3IG1pbiBkaXN0YW5jZSBmb3Igbm9kZSB2CgkJCQlwcS5wdXNoKG1ha2VfcGFpcihkaXN0W3ZdLCB2KSk7IC8vIHlvdSBjYW4gdGhpbmsgb2YgZGppa3N0cmEncyBiZWluZyBhIGRpc2NyZXRlL2dyZWVkeSBCRlMuIEl0IHdpbGwgZm9jdXMgb24gdGhlIGN1cnJlbnQgc2hvcnRlc3QgcGF0aCBhbmQgZ3JlZWRpbHkgc2VhcmNoIGFkamFjZW50IHBhdGhzLgoJCQl9CgkJfQoJfQp9Cg==');
+        FILE_CACHE['dsu.cpp'] = atob('dm9pZCBpbml0KCkgewogICAgZm9yIChpbnQgaSA9IDA7IGkgPCBOOyArK2kpIHsKICAgICAgICBmYXRoZXJbaV0gPSBpOwogICAgICAgIGhlaWdodFtpXSA9IDA7CiAgICB9Cn0KCmludCBmaW5kKGludCBub2RlKSB7IC8vIGdldHMgdGhlIHJlcHJlc2VudGF0aXZlLCBvciByYXRoZXIgcmVjdXJzaXZlbHkgYXNzaWducyB0aGUgb3JpZ2luYWwgbm9kZSBhbmQgYWxsIG5vZGVzIHVwIHRoZSAidHJlZSIgdW50aWwgaXQgaXMgYXNzaWduZWQgdGhlICJyb290Ii9yZXByZXNlbnRhdGl2ZQogICAgaWYgKGZhdGhlcltub2RlXSAhPSBub2RlKSB7IC8vIG1ha2Ugc3VyZSBmYXRoZXIgaXMgZ2xvYmFsCiAgICAgICAgZmF0aGVyW25vZGVdID0gZmluZChmYXRoZXJbbm9kZV0pOwogICAgfQogICAgcmV0dXJuIGZhdGhlcltub2RlXTsKfQoKdm9pZCB1bml0ZShpbnQgQSwgaW50IEIpIHsKICAgIGludCByb290QSA9IGZpbmQoQSk7CiAgICBpbnQgcm9vdEIgPSBmaW5kKEIpOwogICAgaWYgKHJvb3RBID09IHJvb3RCKSByZXR1cm47CiAgICBpZiAoaGVpZ2h0W3Jvb3RBXSA+IGhlaWdodFtyb290Ql0pIHsKICAgICAgICBmYXRoZXJbcm9vdEJdID0gcm9vdEE7CiAgICAgICAgaGVpZ2h0W3Jvb3RBXSA9IG1heChoZWlnaHRbcm9vdEFdLCBoZWlnaHRbcm9vdEJdICsgMSk7CiAgICB9IGVsc2UgewogICAgICAgIGZhdGhlcltyb290QV0gPSByb290QjsKICAgICAgICBoZWlnaHRbcm9vdEJdID0gbWF4KGhlaWdodFtyb290Ql0sIGhlaWdodFtyb290QV0gKyAxKTsKICAgIH0KfQoKLy8gaWYgeW91IHdhbnQgdG8gaW1wbGVtZW50IEtydXNrYWwncywgaW5pdGlhbGl6ZSBhIERTVS4gCi8vIFRoZW4gYWRkIHRoZSBzb3J0ZWQgZnJvbSBsZWFzdCB0byBncmVhdGVzdCB3ZWlnaHRlZCBlZGdlcyBvbmUtYnktb25lIHRvIHRoZSBEU1UsIHdpdGggdGhlIGV4Y2VwdGlvbiBvZiB0aGUgZWRnZXMgZnJvbSB3aGljaCB0aGVpciBub2RlcyBhcmUgaW4gdGhlIHNhbWUgY29tcG9uZW50ICh3aGljaCB5b3UgY2hlY2sgdXNpbmcgdGhlIGZpbmQoKSBmdW5jdGlvbikKLy8gZm9yIHN1Y2ggZXhjZXB0aW9uLCB5b3UganVzdCBza2lwL2NvbnRpbnVlIHRoZSBsb29wLiBBbmQgdGhlbiB5b3UncmUgZG9uZSEK');
+        FILE_CACHE['eulertour.cpp'] = atob('Ly8gdG9vayB0aGlzIG9uZSBkaXJlY3RseSBvZmYgb2YgVVNBQ08gR3VpZGUKLy8gVGhlIGdyYXBoIHJlcHJlc2VudGVkIGFzIGFuIGFkamFjZW5jeSBsaXN0ICgwLWluZGV4ZWQpCnZlY3Rvcjx2ZWN0b3I8aW50Pj4gbmVpZ2hib3Jze3sxLCAyfSwgezB9LCB7MCwgMywgNH0sIHsyfSwgezJ9fTsKdmVjdG9yPGludD4gc3RhcnQobmVpZ2hib3JzLnNpemUoKSk7CnZlY3RvcjxpbnQ+IGVuZChuZWlnaGJvcnMuc2l6ZSgpKTsKaW50IHRpbWVyID0gMDsKCnZvaWQgZXVsZXJfdG91cihpbnQgYXQsIGludCBwcmV2KSB7CglzdGFydFthdF0gPSB0aW1lcisrOwoJZm9yIChpbnQgbiA6IG5laWdoYm9yc1thdF0pIHsKCQlpZiAobiAhPSBwcmV2KSB7IGV1bGVyX3RvdXIobiwgYXQpOyB9Cgl9CgllbmRbYXRdID0gdGltZXI7Cn0K');
+        FILE_CACHE['floydwarshall.cpp'] = atob('Ly8gVGFrZW4gYW5kIGVkaXRlZCBmcm9tIFVTQUNPIEd1aWRlLiBIb25lc3RseSBhIHZlcnkgc2ltcGxlIGltcGxlbWVudGF0aW9uLCBzbyBub3Qgc3VyZSBpZiB0aGlzIGZpbGUgaXMgcmVhbGx5IGV2ZW4gbmVlZGVkLgppbnQgbWFpbigpIHsKICB2ZWN0b3I8dmVjdG9yPGxvbmcgbG9uZz4+IG1pbl9kaXN0KG4sIHZlY3Rvcjxsb25nIGxvbmc+KG4sIElOVF9NQVgpKTsKCiAgaW50IGEsIGIsIGM7CiAgZm9yIChpbnQgaSA9IDA7IGkgPCBtOyBpKyspIHsKCQljaW4gPj4gYSA+PiBiID4+IGM7IC8vIGEgYW5kIGIgYXJlIG5vZGUgSURzLCBjIGlzIHRoZSBlZGdlIHdlaWdodCBiZXR3ZWVuIG5vZGVzIGEgYW5kIGIKCQlpZiAoYyA8IG1pbl9kaXN0W2FdW2JdKSB7IG1pbl9kaXN0W2FdW2JdID0gbWluX2Rpc3RbYl1bYV0gPSBjOyB9Cgl9CiAgCiAgZm9yIChpbnQgayA9IDA7IGsgPCBuOyBrKyspIHsKICAgIGZvciAoaW50IGkgPSAwOyBpIDwgbjsgaSsrKSB7CiAgICAgIGZvciAoaW50IGogPSBpICsgMTsgaiA8IG47IGorKykgewogICAgICAgIGxvbmcgbG9uZyBuZXdfZGlzdCA9IG1pbl9kaXN0W2ldW2tdICsgbWluX2Rpc3Rba11bal07CiAgICAgICAgaWYgKG5ld19kaXN0IDwgbWluX2Rpc3RbaV1bal0pIHsKICAgICAgICAgIG1pbl9kaXN0W2ldW2pdID0gbWluX2Rpc3Rbal1baV0gPSBuZXdfZGlzdDsKICAgICAgICB9CiAgICAgIH0KICAgIH0KICB9Cn0K');
+        FILE_CACHE['modinved.cpp'] = atob('Ly8gU291cmNlOiBVU0FDTyBHdWlkZSAKaW50IGludihpbnQgeCkgewoJaWYgKHggPD0gMSkgeyByZXR1cm4geDsgfQoJcmV0dXJuIE1PRCAtIE1PRCAvIHggKiBpbnYoTU9EICUgeCkgJSBNT0Q7Cn0KCi8vIFlvdSBjYW4gcHJlY29tcHV0ZSBsaWtlIHRoaXM6CmludlsxXSA9IDE7CmZvciAoaW50IGkgPSAyOyBpIDwgbTsgaSsrKSB7IGludltpXSA9IG0gLSBtIC8gaSAqIGludlttICUgaV0gJSBtOyB9Cg==');
+        FILE_CACHE['rollingandfasthash.cpp'] = atob('Ly8gQm92aW5lIEdlbm9taWNzIFNvbHV0aW9uOiBodHRwczovL3VzYWNvLm9yZy9pbmRleC5waHA/cGFnZT12aWV3cHJvYmxlbTImY3BpZD03MzYKLy8gQWxzbyBjb25zaWRlciBsb29raW5nIGludG8gRmFzdCBIYXNoaW5nOiBodHRwczovL2NvZGVmb3JjZXMuY29tL2Jsb2cvZW50cnkvNjA3MzcKI2luY2x1ZGUgPGJpdHMvc3RkYysrLmg+CnVzaW5nIG5hbWVzcGFjZSBzdGQ7CgppbnQgbWFpbigpIHsKICAgIGlmc3RyZWFtIGNpbigiY293bm9taWNzLnR4dCIpOwogICAgb2ZzdHJlYW0gY291dCgiY293bm9taWNzLm91dCIpOwoKICAgIGlvc19iYXNlOjpzeW5jX3dpdGhfc3RkaW8oZmFsc2UpOwogICAgY2luLnRpZShOVUxMKTsKCiAgICBpbnQgbiwgbTsKICAgIGNpbiA+PiBuID4+IG07CiAgICAKICAgIHZlY3RvcjxzdHJpbmc+IHNwb3QobiksIG5vc3BvdChuKTsKICAgIHZlY3RvcjxpbnQ+IHIobSk7CiAgICBmb3IgKGludCBpID0gMDsgaSA8IG47ICsraSkgY2luID4+IHNwb3RbaV07CiAgICBmb3IgKGludCBpID0gMDsgaSA8IG47ICsraSkgY2luID4+IG5vc3BvdFtpXTsKICAgIGZvciAoaW50IGkgPSAwOyBpIDwgbTsgKytpKSByW2ldID0gcmFuZCgpICUgMTAwMDAwMDA7CiAgICBpbnQgb3V0ID0gbTsKICAgIGludCBpID0gMCwgaiA9IDA7CiAgICB2ZWN0b3I8aW50PiBoMShuLCAwKSwgaDIobiwgMCk7CiAgICB1bm9yZGVyZWRfc2V0PGludD4gaDFzZXQgPSB7fTsKICAgIGJvb2wgZmxhZzsKICAgIHdoaWxlIChqIDwgbSAmJiBpIDwgbSkgewogICAgICAgIGgxc2V0ID0ge307CiAgICAgICAgZm9yIChpbnQgayA9IDA7IGsgPCBuOyArK2spIHsKICAgICAgICAgICAgaDFba10gKz0gcltqXSAqIHNwb3Rba11bal07CiAgICAgICAgICAgIGgxW2tdICU9IDEwMDAwMDAwOwogICAgICAgICAgICBoMXNldC5pbnNlcnQoaDFba10pOwogICAgICAgIH0KICAgICAgICBmbGFnID0gZmFsc2U7CiAgICAgICAgZm9yIChpbnQgayA9IDA7IGsgPCBuOyArK2spIHsKICAgICAgICAgICAgaDJba10gKz0gcltqXSAqIG5vc3BvdFtrXVtqXTsKICAgICAgICAgICAgaDJba10gJT0gMTAwMDAwMDA7CiAgICAgICAgICAgIGlmIChoMXNldC5maW5kKGgyW2tdKSAhPSBoMXNldC5lbmQoKSkgZmxhZyA9IHRydWU7CiAgICAgICAgfQoKICAgICAgICBpZiAoIWZsYWcpIHsKICAgICAgICAgICAgb3V0ID0gbWluKG91dCwgaiAtIGkgKyAxKTsKICAgICAgICAgICAgY291dCA8PCBqIDw8ICIgIiA8PCBpIDw8IGVuZGw7CiAgICAgICAgICAgIGZvciAoaW50IGsgPSAwOyBrIDwgbjsgKytrKSB7CiAgICAgICAgICAgICAgICBoMVtrXSAtPSByW2ldICogc3BvdFtrXVtpXTsKICAgICAgICAgICAgICAgIGgxW2tdICU9IDEwMDAwMDAwOwogICAgICAgICAgICAgICAgaDJba10gLT0gcltpXSAqIG5vc3BvdFtrXVtpXTsKICAgICAgICAgICAgICAgIGgyW2tdICU9IDEwMDAwMDAwOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGkrKzsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICBqKys7CiAgICAgICAgfQogICAgICAgIGlmIChpID4gaikgewogICAgICAgICAgICBqID0gaTsKICAgICAgICB9IAogICAgfQogICAgY291dCA8PCBvdXQgPDwgZW5kbDsKfQo=');
+        FILE_CACHE['segtree.cpp'] = atob('I2luY2x1ZGUgPGJpdHMvc3RkYysrLmg+CnVzaW5nIG5hbWVzcGFjZSBzdGQ7Cgp1c2luZyBsbCA9IGxvbmcgbG9uZzsKCmludCBtYWluKCkgewogICAgaW9zX2Jhc2U6OnN5bmNfd2l0aF9zdGRpbyhmYWxzZSk7CiAgICBjaW4udGllKE5VTEwpOwoKICAgIGxsIG4sIG07CiAgICBjaW4gPj4gbiA+PiBtOwoKICAgIHZlY3RvcjxsbD4gc2VndHJlZSgyICogbiArIDIwLCAwKTsKICAgIGZvciAobGwgaSA9IDA7IGkgPCBuOyArK2kpIGNpbiA+PiBzZWd0cmVlW24gKyBpXTsKICAgIGZvciAobGwgaSA9IG4gLSAxOyBpID4gMDsgLS1pKSBzZWd0cmVlW2ldID0gc2VndHJlZVtpIDw8IDFdICsgc2VndHJlZVtpIDw8IDF8MV07CgogICAgbGwgY2hvaWNlOwogICAgbGwgZiwgczsKICAgIGxsIHJlczsKICAgIGZvciAobGwgaSA9IDA7IGkgPCBtOyArK2kpIHsKICAgICAgICBjaW4gPj4gY2hvaWNlOwogICAgICAgIGlmIChjaG9pY2UgPT0gMSkgewogICAgICAgICAgICBjaW4gPj4gZiA+PiBzOwogICAgICAgICAgICBmLS07CiAgICAgICAgICAgIHNlZ3RyZWVbbiArIGZdID0gczsKICAgICAgICAgICAgZm9yIChsbCBqID0gbiArIGY7IGogPiAxOyBqID4+PSAxKQogICAgICAgICAgICAgICAgc2VndHJlZVtqID4+IDFdID0gc2VndHJlZVtqXSArIHNlZ3RyZWVbal4gMV07CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgY2luID4+IGYgPj4gczsgZi0tOwogICAgICAgICAgICByZXMgPSAwOwogICAgICAgICAgICBmb3IgKGYgKz0gbiwgcys9IG47IGYgPCBzOyBmID4+PSAxLCBzID4+PSAxKSB7CiAgICAgICAgICAgICAgICBpZiAoZiAmIDEpIHJlcyArPSBzZWd0cmVlW2YrK107CiAgICAgICAgICAgICAgICBpZiAocSAmIDEpIHJlcyArPSBzZWd0cmVlWy0tcy07OwogICAgICAgICAgICB9CiAgICAgICAgICAgIGNvdXQgPDwgcmVzIDw8IGVuZGw7CiAgICAgICAgfQogICAgfQp9Cg==');
+        FILE_CACHE['toposort.cpp'] = atob('Ly8gdG9vayB0aGlzIG9uZSBkaXJlY3RseSBvZmYgb2YgVVNBQ08gR3VpZGUKCmludCBtYWluKCkgewoJaW50IG4sIG07CgljaW4gPj4gbiA+PiBtOwoJdmVjdG9yPHZlY3RvcjxpbnQ+PiBncmFwaChuKTsKCXZlY3RvcjxpbnQ+IGluZGVncmVlKG4sIDApOwoJcXVldWU8aW50PiBxOwoJZm9yIChpbnQgaSA9IDA7IGkgPCBtOyBpKyspIHsKCQlpbnQgYSwgYjsKCQljaW4gPj4gYSA+PiBiOwoJCWdyYXBoW2EgLSAxXS5wdXNoX2JhY2soYiAtIDEpOwoJCWluZGVncmVlW2IgLSAxXSsrOwoJfQoJZm9yIChpbnQgaSA9IDA7IGkgPCBuOyBpKyspIHsKCQkvLyBsb2NhdGUgdGhlIG5vZGVzIHdpdGggaW5kZWdyZWUgMCBhbmQgcHVzaCB0aGVtIGludG8gdGhlIHF1ZXVlCgkJaWYgKGluZGVncmVlW2ldID09IDApIHsgcS5wdXNoKGkpOyB9Cgl9Cgl2ZWN0b3I8aW50PiBvcmRlcjsKCXdoaWxlICghcS5lbXB0eSgpKSB7CgkJaW50IGN1cnIgPSBxLmZyb250KCk7CgkJcS5wb3AoKTsKCQkvLyBhZGQgdGhlIGN1cnJlbnQgbm9kZSB0byB0aGUgb3JkZXIKCQlvcmRlci5wdXNoX2JhY2soY3Vycik7CgkJZm9yIChpbnQgbmV4dCA6IGdyYXBoW2N1cnJdKSB7CgkJCS8vIHJlbW92ZSB0aGUgY3VycmVudCBub2RlIGZyb20gdGhlIGdyYXBoCgkJCWluZGVncmVlW25leHRdLS07CgkJCS8vIHB1c2ggYW55IG5ldyBub2RlcyB3aXRoIGluZGVncmVlIDAgaW50byB0aGUgcXVldWUKCQkJaWYgKGluZGVncmVlW25leHRdID09IDApIHsgcS5wdXNoKG5leHQpOyB9CgkJfQoJfQoJLy8gaWYgdGhlcmUgaXNuJ3QgYSB2YWxpZCB0b3BvbG9naWNhbCBzb3J0aW5nCglpZiAob3JkZXIuc2l6ZSgpICE9IG4pIHsKCQljb3V0IDw8ICJJTVBPU1NJQkxFIiA8PCBlbmRsOwoJCXJldHVybiAwOwoJfQoJY291dCA8PCBvcmRlclswXSArIDE7Cglmb3IgKGludCBpID0gMTsgaSA8IG47IGkrKykgeyBjb3V0IDw8ICIgIiA8PCBvcmRlcltpXSArIDE7IH0KCWNvdXQgPDwgZW5kbDsKCXJldHVybiAwOwp9Cg==');
+        // Build the list into the DOM after populating FILE_CACHE
+        buildUsacoList(algoFiles);
+        loadBlog();
+        loadVideos();
+        loadMisc();
+      }
+      initSite();
+      // Initialize the ASCII torus viewer once the DOM is ready.  This function
+      // draws a 3D torus using ASCII characters and allows the user to drag
+      // to change the viewing angles.  When not dragging the torus rotates
+      // slowly by itself.  See initTorus() implementation below.
+      initTorus();
+    </script>
+  </body>
 </html>
