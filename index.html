@@ -603,33 +603,6 @@
         return escaped;
       }
 
-      // Custom C++ highlighter used by the code viewer.  It escapes HTML
-      // special characters and wraps strings, comments, keywords,
-      // container names and numeric literals with <span class="token ...">
-      // elements.  Token classes correspond to CSS rules defined in
-      // the style section of this page.  This function does not rely
-      // on any external libraries.
-      function simpleHighlightCpp(raw) {
-        // Escape HTML special characters
-        let escaped = raw
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-        // Strings (double or single quoted)
-        escaped = escaped.replace(/("([^"\\]|\\.)*"|'([^'\\]|\\.)*')/g, '<span class="token string">$1</span>');
-        // Comments (// and /* */)
-        escaped = escaped.replace(/(\/\/.*?$|\/\*[\s\S]*?\*\/)/gm, '<span class="token comment">$1</span>');
-        // Keywords
-        const keywordRegex = /\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b/g;
-        escaped = escaped.replace(keywordRegex, '<span class="token keyword">$1</span>');
-        // Common STL container names and other types
-        const typeRegex = /\b(vector|string|map|set|unordered_map|unordered_set|pair|queue|stack|priority_queue|list|deque|array|tuple)\b/g;
-        escaped = escaped.replace(typeRegex, '<span class="token class-name">$1</span>');
-        // Numeric literals (integers and floats)
-        escaped = escaped.replace(/\b(\d+)(\.\d+)?\b/g, '<span class="token number">$1$2</span>');
-        return escaped;
-      }
-
       // Build blog cards from embedded list
       function loadBlog() {
         const container = document.getElementById('blog-cards');
