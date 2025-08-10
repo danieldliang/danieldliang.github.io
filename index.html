@@ -423,65 +423,116 @@
         container.classList.remove('viewer-open');
       });
       // Search functionality
-      document.getElementById('viewer-search').addEventListener('input', () => {
-        const query = document.getElementById('viewer-search').value.trim();
-        // Reset the viewer to its highlighted state before applying search marks
-        renderViewer();
-        currentHits = [];
-        currentHitIndex = 0;
-        if (query) {
-          const contentEl = document.getElementById('viewer-content');
-          const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-          // iterate text nodes inside viewer and highlight matches
-          const walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT, null);
-          while (walker.nextNode()) {
-            const node = walker.currentNode;
-            const parent = node.parentElement;
-            const matches = [...node.textContent.matchAll(regex)];
-            if (matches.length) {
-              let lastIndex = 0;
-              const fragments = [];
-              matches.forEach(m => {
-                const start = m.index;
-                const end = start + m[0].length;
-                fragments.push(document.createTextNode(node.textContent.slice(lastIndex, start)));
-                const mark = document.createElement('mark');
-                mark.className = '';
-                mark.textContent = node.textContent.slice(start, end);
-                fragments.push(mark);
-                currentHits.push(mark);
-                lastIndex = end;
-              });
-              fragments.push(document.createTextNode(node.textContent.slice(lastIndex)));
-              fragments.forEach(f => parent.insertBefore(f, node));
-              parent.removeChild(node);
+      (() => {
+        const viewer   = document.getElementById('viewer-content');
+        const input    = document.getElementById('viewer-search');
+        const btnNext  = document.getElementById('search-next');
+        const btnPrev  = document.getElementById('search-prev');
+        const countEl  = document.getElementById('search-count');
+
+        let hits = [];
+        let idx  = -1;
+
+        const escReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const updateCount = () => { countEl.textContent = hits.length ? `${idx+1}/${hits.length}` : '0/0'; };
+
+        function clearHits() {
+          // unwrap only what we wrapped
+          viewer.querySelectorAll('mark.__find').forEach(m => {
+            m.replaceWith(document.createTextNode(m.textContent));
+          });
+          viewer.normalize();
+          hits = [];
+          idx  = -1;
+          updateCount();
+        }
+
+        function buildHits(term) {
+          if (!term) return;
+          const re = new RegExp(escReg(term), 'gi');
+
+          // collect matches per text node first
+          const walker = document.createTreeWalker(viewer, NodeFilter.SHOW_TEXT, null);
+          const tasks = new Map(); // node -> [{s,e},...]
+
+          let node;
+          while ((node = walker.nextNode())) {
+            const text = node.nodeValue;
+            let m;
+            re.lastIndex = 0; // reset for each node
+            while ((m = re.exec(text)) !== null) {
+              (tasks.get(node) || tasks.set(node, []).get(node)).push({ s: m.index, e: m.index + m[0].length });
             }
           }
-          if (currentHits.length) {
-            currentHitIndex = 0;
-            scrollToHit(currentHits[currentHitIndex]);
-          }
+
+          // replace from right to left to preserve indices
+          tasks.forEach((ranges, node) => {
+            ranges.sort((a,b) => b.s - a.s);
+            const t = node.nodeValue;
+            const frag = document.createDocumentFragment();
+            let cur = t.length;
+
+            ranges.forEach(r => {
+              const after = t.slice(r.e, cur);
+              if (after) frag.prepend(document.createTextNode(after));
+
+              const mark = document.createElement('mark');
+              mark.className = '__find';
+              mark.textContent = t.slice(r.s, r.e);
+              mark.style.background = '#ffe58f';
+              frag.prepend(mark);
+              hits.push(mark);
+
+              cur = r.s;
+            });
+
+            const before = t.slice(0, cur);
+            if (before) frag.prepend(document.createTextNode(before));
+            node.replaceWith(frag);
+          });
+
+          if (hits.length) { idx = 0; activate(); }
+          updateCount();
         }
-        renderHits();
-      });
-      function scrollToHit(el) {
-        const viewerContent = document.getElementById('viewer-content');
-        const rect = el.getBoundingClientRect();
-        const containerRect = viewerContent.getBoundingClientRect();
-        viewerContent.scrollTop += rect.top - containerRect.top - containerRect.height / 2 + el.offsetHeight;
-      }
-      document.getElementById('search-next').addEventListener('click', () => {
-        if (!currentHits.length) return;
-        currentHitIndex = (currentHitIndex + 1) % currentHits.length;
-        scrollToHit(currentHits[currentHitIndex]);
-        renderHits();
-      });
-      document.getElementById('search-prev').addEventListener('click', () => {
-        if (!currentHits.length) return;
-        currentHitIndex = (currentHitIndex - 1 + currentHits.length) % currentHits.length;
-        scrollToHit(currentHits[currentHitIndex]);
-        renderHits();
-      });
+
+        function activate() {
+          // visual focus
+          hits.forEach(h => { h.style.boxShadow = ''; h.style.outline = ''; });
+          const el = hits[idx];
+          el.style.boxShadow = '0 0 0 2px #7c3aed inset';
+
+          // center into view both vertically and horizontally
+          const c = viewer.getBoundingClientRect();
+          const r = el.getBoundingClientRect();
+          viewer.scrollTop  += (r.top  - c.top)  - c.height / 2;
+          viewer.scrollLeft += (r.left - c.left) - c.width  / 2;
+        }
+
+        function rebuild() {
+          // Start from clean code (no previous marks), then wrap matches
+          renderViewer();
+          clearHits();
+          const term = input.value.trim();
+          if (!term) return;
+          buildHits(term);
+        }
+
+        input.addEventListener('input', rebuild);
+
+        btnNext.addEventListener('click', () => {
+          if (!hits.length) { rebuild(); if (!hits.length) return; }
+          idx = (idx + 1) % hits.length;
+          activate();
+          updateCount();
+        });
+
+        btnPrev.addEventListener('click', () => {
+          if (!hits.length) { rebuild(); if (!hits.length) return; }
+          idx = (idx - 1 + hits.length) % hits.length;
+          activate();
+          updateCount();
+        });
+      })();
       // Copy code button
       document.getElementById('copy-code').addEventListener('click', async () => {
         const filename = document.getElementById('viewer-filename').textContent;
