@@ -32,13 +32,20 @@
       }
       header {
         padding: 2rem;
-        /* Use a two‑column grid for the hero so that the intro text/chips occupy
-           the first column and the ASCII viewer occupies the second.  This
-           guarantees they sit side‑by‑side on larger screens.  On narrow
-           screens the columns will wrap to a single column. */
+        /* Lay out the hero in two columns: the intro text/chips and the
+           ASCII viewer.  The left column contains the text and chips
+           while the right column contains the ASCII viewer.  To reduce
+           the white space between the columns, we slightly narrow the gap
+           and gently adjust the column proportions so the viewer starts
+           a bit farther to the left.  On narrow screens the grid
+           collapses to a single column. */
         display: grid;
-        grid-template-columns: 1fr auto;
-        column-gap: 2rem;
+        grid-template-columns: 3fr 2fr;
+        /* Allocate a slightly larger portion of the header to the right
+           column (the ASCII viewer) relative to the left.  This
+           arrangement pulls the viewer closer to the text while
+           preserving balance. */
+        column-gap: 0.5rem;
         align-items: start;
         justify-content: start;
       }
@@ -98,23 +105,29 @@
       .hero-left {
         flex: 1;
         max-width: 600px;
-        margin-right: 1rem;
+        /* Keep a modest margin between the text column and the viewer. */
+        margin-right: 0.5rem;
         display: flex;
         flex-direction: column;
         gap: 1rem;
       }
       .hero-right {
         flex: 1;
-        /* Layout the ASCII viewer and its caption vertically.  Center both horizontally
-           and vertically within this column. */
+        /* Layout the ASCII viewer and its caption vertically.  Align
+           contents to the start to shift the viewer towards the
+           beginning of its column. */
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
-        min-width: 250px;
+        /* Allow the right column to shrink when space is limited. */
+        min-width: 200px;
       }
       #torus-viewer {
         font-family: monospace;
+        /* Use a smaller font so the 3D letter fits neatly within its
+           container.  A compressed line height reduces the vertical space
+           without changing the aspect ratio. */
         font-size: 0.6rem;
         line-height: 0.6rem;
         white-space: pre;
@@ -124,6 +137,16 @@
         border-radius: 0.5rem;
         padding: 0.5rem;
         background: var(--card-bg-light);
+        /* Fill the column horizontally while preserving a sensible maximum
+           width.  The height adjusts automatically based on the number
+           of rows rendered. */
+        width: 100%;
+        max-width: 380px;
+        /* Do not centre the viewer horizontally; align it to the
+           left of its column to reduce the perceived whitespace
+           between the viewer and the text. */
+        margin: 0;
+        min-width: 0;
       }
       body.dark #torus-viewer {
         border-color: var(--border-dark);
@@ -325,15 +348,17 @@
       }
       #viewer-content {
         flex: 1;
-        overflow: auto;
+        /* Allow both horizontal and vertical scrolling.  Without explicit
+           horizontal overflow set, long lines cannot be scrolled. */
+        overflow-x: auto;
+        overflow-y: auto;
         background: var(--bg-light);
         padding: 1rem;
         font-family: monospace;
         font-size: 0.875rem;
-         /* Preserve spacing within code lines */
-         /* Each code span will have white-space: pre defined separately */
+        /* Preserve spacing within code lines */
+        /* Each code span will have white-space: pre defined separately */
       }
-       #viewer-content .code-row { /* allow horizontal overflow on long lines */ }
       
       body.dark #viewer-content {
         background: var(--bg-dark);
@@ -352,12 +377,12 @@
        }
        #viewer-content .code {
          white-space: pre;
-         /* Allow horizontal scrolling within each code cell.  When a line
-            exceeds the available width, users can scroll horizontally to
-            view the remainder of the line. */
-         overflow-x: auto;
-         display: block;
+         /* Let long lines extend and rely on the parent container to provide
+            horizontal scrolling.  The flex-grow property allows the code
+            portion to take up the remaining space.  A minimum width of
+            zero prevents the element from overflowing its container. */
          flex-grow: 1;
+         min-width: 0;
        }
       mark {
         background: yellow;
@@ -440,8 +465,57 @@
         text-align: center;
         width: 100%;
       }
+
+      /* Responsive tweaks for mobile devices.  When the viewport width
+         drops below 768px, stack the hero layout vertically and
+         adjust margins so that the ASCII viewer appears below the
+         introductory text.  Additionally, ensure the viewer uses the
+         full width of its container on small screens. */
+      @media (max-width: 768px) {
+        header {
+          grid-template-columns: 1fr;
+          row-gap: 1rem;
+        }
+        .hero-left {
+          margin-right: 0;
+        }
+        .hero-right {
+          align-items: center;
+        }
+        #torus-viewer {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+      }
+
+      /* Style the attribution link to look like a minimal pill button. */
+      .inspired a {
+        display: inline-block;
+        padding: 0.1rem 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid var(--border-light);
+        background: var(--card-bg-light);
+        color: inherit;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+      body.dark .inspired a {
+        border-color: var(--border-dark);
+        background: var(--card-bg-dark);
+      }
+      .inspired a:hover {
+        background: var(--border-light);
+      }
+      body.dark .inspired a:hover {
+        background: var(--border-dark);
+      }
     </style>
-    <!-- PrismJS scripts removed: using custom highlighter instead -->
+    <!-- Load PrismJS for syntax highlighting.  The cpp component provides
+         C++ grammar definitions used by Prism.highlight().  These scripts
+         are loaded locally from the assets folder to avoid external
+         dependencies. -->
+    <script src="assets/prism.js"></script>
+    <script src="assets/prism-cpp.js"></script>
   </head>
   <body>
     <header>
@@ -470,7 +544,7 @@
       <div class="hero-right">
         <pre id="torus-viewer" aria-label="ASCII D"></pre>
         <div class="inspired">
-          inspired by <a href="https://www.a1k0n.net/2011/07/20/donut-math.html" target="_blank" rel="noopener">a1k0n</a>
+          Inspired by <a href="https://www.a1k0n.net/2011/07/20/donut-math.html" target="_blank" rel="noopener">a1k0n</a>
         </div>
       </div>
     </header>
@@ -712,7 +786,12 @@
           viewBtn.addEventListener('click', () => openViewer(file));
           const dlLink = document.createElement('a');
           dlLink.textContent = 'Download';
-          dlLink.href = 'original/stuff/usaco/algos/' + file;
+          // Use a data URI for downloads.  When users click the link, the
+          // raw source code is encoded as a text/plain blob and offered
+          // for download.  This avoids broken links when the original
+          // directory is not present on the server.
+          const raw = FILE_CACHE[file] || '';
+          dlLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(raw);
           dlLink.setAttribute('download', file);
           dlLink.className = '';
           btnContainer.appendChild(viewBtn);
@@ -808,19 +887,25 @@
       // state resets.
       function renderViewer() {
         const contentEl = document.getElementById('viewer-content');
-        // Remove any stray HTML tags from the raw code (e.g. token markup) to
-        // ensure only pure code remains.  Then escape special characters so
-        // they render correctly.
-        const cleaned = currentRaw.replace(/<[^>]*>/g, '');
-        const escaped = cleaned
+        // Highlight the currently loaded C++ source using our simple
+        // syntax highlighter.  Do not attempt to strip HTML tags
+        // from currentRaw: the FILE_CACHE entries contain the raw
+        // C++ source without markup, so removing angle bracket
+        // sequences would inadvertently strip template arguments and
+        // other syntactic elements.  simpleHighlightCpp() escapes
+        // HTML special characters and wraps recognised tokens in
+        // <span class="token ..."> tags.
+        // Escape the raw C++ source for safe HTML display.  Avoid
+        // inserting any additional markup so that the code is shown
+        // exactly as written.  Escaping ensures that angle brackets
+        // and ampersands are displayed correctly in the browser.
+        const highlighted = currentRaw
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');
-        // Split on newlines to build code rows.  We intentionally avoid any
-        // syntax highlighting here to ensure the viewer never shows stray
-        // HTML tags or broken markup.  Each row contains a line number and
-        // the escaped code for that line.
-        const lines = escaped.split(/\n/);
+        // Split on newlines to build code rows.  Each row contains a line
+        // number and the highlighted code for that line.
+        const lines = highlighted.split(/\n/);
         const htmlLines = lines.map((line, idx) => {
           return '<div class="code-row">' +
                    '<span class="select-none">' + (idx + 1) + '</span>' +
@@ -919,8 +1004,16 @@
         let auto = true;
       
         // Increase grid resolution so the 3D 'D' is more visible.  A wider and
-        // taller grid yields a larger rendered shape.
-        const W = 80, H = 40;     // ascii grid size
+        // taller grid yields a larger rendered shape.  These values were
+        // tuned to produce a clearly legible letter on the page.  The
+        // height/width ratio roughly matches a capital D when rendered
+        // upright.
+        // Reduce the grid height and slightly narrow the width.  A shorter
+        // height makes the ASCII letter more compact vertically and
+        // eliminates unused whitespace underneath.  Keeping a generous
+        // width preserves legibility.
+        const W = 75;
+        const H = 28;     // ascii grid size
         const zbufSize = W * H;
       
         // Build point cloud for a 3D 'D' (extruded outline):
@@ -928,12 +1021,14 @@
         // - outer semicircle radius = r
         // - inner radius rInner = r - t (hole)
         // - extruded depth along z in [-extrude, extrude]
-        const r = 12;           // radius of curved part
-        const t = 4;            // thickness of vertical bar
-        const height = 24;      // total height (|y| <= height/2)
-        const extrude = 4;      // half-depth
-        const stepCurve = 0.08; // finer angular sampling
-        const stepZ = 0.8;      // finer depth sampling
+        // The following parameters were enlarged to improve visibility of
+        // the letter; adjust to taste.
+        const r = 16;           // radius of curved part
+        const t = 6;            // thickness of vertical bar
+        const height = 32;      // total height (|y| <= height/2)
+        const extrude = 6;      // half-depth
+        const stepCurve = 0.05; // finer angular sampling
+        const stepZ = 0.6;      // finer depth sampling
       
         const points = [];  // each: {pos:[x,y,z], norm:[nx,ny,nz]}
       
@@ -965,14 +1060,24 @@
             }
           }
         }
-        // Vertical bar faces (two planes)
-        for (let y=-height/2; y<=height/2; y+=1){
-          for (let z=-extrude; z<=extrude; z+=stepZ){
-            addPoint(0, y, z, -1, 0, 0);  // left outer face
-            addPoint(t, y, z,  1, 0, 0);  // right face of bar
+        // Curved vertical bar surfaces.  To reduce the appearance of
+        // perfectly flat faces on the "D" we approximate the bar as
+        // a series of narrow slices forming a quarter cylinder.  For
+        // each slice at position i in [0,t], compute a normal that
+        // sweeps from pointing fully left (i=0) to fully right (i=t).
+        // The z component of the normal is chosen so that nx^2 + nz^2 = 1.
+        for (let i = 0; i <= t; i += 1) {
+          // Normal components: nx varies from -1 to 1 across the bar
+          const nx = (i - t/2) / (t/2);
+          const nz = Math.sqrt(Math.max(0, 1 - nx*nx));
+          for (let y = -height/2; y <= height/2; y += 1) {
+            for (let z = -extrude; z <= extrude; z += stepZ) {
+              addPoint(i, y, z, nx, 0, nz);
+            }
           }
         }
-        // Front/back caps on the bar
+        // Front/back caps on the bar remain flat.  These faces close
+        // off the bar at either end of the extrusion.
         for (let x=0; x<=t; x+=1){
           for (let y=-height/2; y<=height/2; y+=1){
             addPoint(x, y, -extrude, 0,0,-1);
@@ -1016,10 +1121,33 @@
         }
       
         function shade(n){
-          // simple Lambert with light pointing toward viewer (0,0,1)
-          const dot = Math.max(0, n[2]);
+          // simple Lambert shading with light pointing toward viewer (0,0,1)
+          // Scale the normal's z component into the range [0,1] and apply
+          // a mild exponent to favour darker glyphs on surfaces that do
+          // not face the viewer directly.  A larger exponent yields
+          // lower brightness values for shallow angles, creating a
+          // darker overall appearance.  Adjust the offset and divisor
+          // to tune ambient light.
+          // Offset and scale the normal's z component into [0,1] to
+          // compute a base diffuse term.  We add a slightly larger
+          // offset and divisor to ensure surfaces facing away from
+          // the camera still receive some light.  Then raise the
+          // result to a small exponent (<1) so that a wide range of
+          // normal values map to high brightness.  A smaller
+          // exponent darkens the overall letter by pushing more
+          // values toward 1.0.  Finally, map the brightness to a
+          // reversed character ramp so that larger brightness
+          // selects darker glyphs.  This produces a much darker
+          // rendering of the D and reduces the appearance of light
+          // flat surfaces.
+          let dot = (n[2] + 0.3) / 1.3;
+          if (dot < 0) dot = 0;
+          if (dot > 1) dot = 1;
+          // Use an even smaller exponent to push most brightness
+          // values toward 1.0, making the ASCII letter darker overall.
+          const brightness = Math.pow(dot, 0.05);
           const ramp = " .:-=+*#%@";
-          return ramp[Math.floor(dot*(ramp.length-1))];
+          return ramp[Math.floor(brightness * (ramp.length - 1))];
         }
       
         function frame(){
@@ -1050,9 +1178,10 @@
           requestAnimationFrame(frame);
         }
       
-        // Drag-to-rotate
+        // Drag-to-rotate.  When dragging ends, re-enable auto rotation so
+        // the letter continues to spin.
         out.addEventListener('mousedown', e=>{ dragging=true; auto=false; lastX=e.clientX; lastY=e.clientY; });
-        window.addEventListener('mouseup', ()=> dragging=false);
+        window.addEventListener('mouseup', ()=> { dragging=false; auto=true; });
         window.addEventListener('mousemove', e=>{
           if (!dragging) return;
           const dx = (e.clientX-lastX)/120;
