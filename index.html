@@ -1057,7 +1057,7 @@
         }
       
         // Drag-to-rotate
-        canvas.addEventListener('mousedown', e=>{ dragging=true; auto=false; lastX=e.clientX; lastY=e.clientY; });
+        out.addEventListener('mousedown', e=>{ dragging=true; auto=false; lastX=e.clientX; lastY=e.clientY; });
         window.addEventListener('mouseup', ()=> dragging=false);
         window.addEventListener('mousemove', e=>{
           if (!dragging) return;
@@ -1066,7 +1066,7 @@
           A += dx; B += dy;
           lastX = e.clientX; lastY = e.clientY;
         });
-      
+        
         frame();
       }
 
