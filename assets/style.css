@@ -1,0 +1,506 @@
+:root {
+--bg-light: #ffffff;
+--bg-dark: #0f172a;
+--text-light: #1e293b;
+--text-dark: #f1f5f9;
+--border-light: #e2e8f0;
+--border-dark: #334155;
+--card-bg-light: rgba(255, 255, 255, 0.8);
+--card-bg-dark: rgba(15, 23, 42, 0.8);
+--accent: #7c3aed;
+}
+body {
+margin: 0;
+font-family: Arial, sans-serif;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+background-color: var(--bg-light);
+color: var(--text-light);
+transition: background-color 2s ease, color 2s ease;
+}
+body.dark {
+background-color: var(--bg-dark);
+color: var(--text-dark);
+}
+header {
+padding: 2rem;
+/* Lay out the hero in two columns: the intro text/chips and the
+    ASCII viewer.  The left column contains the text and chips
+    while the right column contains the ASCII viewer.  To reduce
+    the white space between the columns, we slightly narrow the gap
+    and gently adjust the column proportions so the viewer starts
+    a bit farther to the left.  On narrow screens the grid
+    collapses to a single column. */
+display: grid;
+grid-template-columns: 3fr 2fr;
+/* Allocate a slightly larger portion of the header to the right
+    column (the ASCII viewer) relative to the left.  This
+    arrangement pulls the viewer closer to the text while
+    preserving balance. */
+column-gap: 0.5rem;
+align-items: start;
+justify-content: start;
+}
+/* Dark/light toggle button styling */
+#theme-toggle {
+    /* Center the icon in a circular button with a transparent fill.
+    The button has only a border so the background does not
+    obscure the moon icon. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    padding: 0;
+    transition: background-color 0.3s, border-color 0.3s;
+    position: relative;
+}
+body.dark #theme-toggle {
+    border-color: var(--border-dark);
+    background: transparent;
+}
+#theme-toggle:hover {
+    background-color: var(--border-light);
+}
+body.dark #theme-toggle:hover {
+    background-color: var(--border-dark);
+}
+/* position is set on the same definition as the sizing above; no need to repeat */
+#theme-toggle svg {
+    /* Overlay the sun and moon icons directly on top of each
+    other.  They inherit currentColor for stroke/fill and are
+    centered via absolute positioning.  Opacity transitions
+    handle the cross fade. */
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.7s ease;
+}
+/* Sun/moon icon opacity transitions */
+#icon-sun { opacity: 1; }
+#icon-moon { opacity: 0; }
+body.dark #icon-sun { opacity: 0; }
+body.dark #icon-moon { opacity: 1; }
+.hero-text {
+/* .hero-text is deprecated; replaced by .hero-left for clarity. */
+}
+/* New hero layout splits the header into left (intro and chips) and right (D viewer). */
+.hero-left {
+flex: 1;
+max-width: 600px;
+/* Keep a modest margin between the text column and the viewer. */
+margin-right: 0.5rem;
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+.hero-right {
+flex: 1;
+/* Layout the ASCII viewer and its caption vertically.  Align
+    contents to the start to shift the viewer towards the
+    beginning of its column. */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+justify-content: center;
+/* Allow the right column to shrink when space is limited. */
+min-width: 200px;
+}
+#torus-viewer {
+font-family: monospace;
+/* Use a smaller font so the 3D letter fits neatly within its
+    container.  A compressed line height reduces the vertical space
+    without changing the aspect ratio. */
+font-size: 0.6rem;
+line-height: 0.6rem;
+white-space: pre;
+cursor: grab;
+user-select: none;
+border: 1px solid var(--border-light);
+border-radius: 0.5rem;
+padding: 0.5rem;
+background: var(--card-bg-light);
+/* Fill the column horizontally while preserving a sensible maximum
+    width.  The height adjusts automatically based on the number
+    of rows rendered. */
+width: 100%;
+max-width: 380px;
+/* Do not centre the viewer horizontally; align it to the
+    left of its column to reduce the perceived whitespace
+    between the viewer and the text. */
+margin: 0;
+min-width: 0;
+}
+body.dark #torus-viewer {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+.chips {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+align-items: center;
+margin-top: 0.5rem;
+}
+.chips a {
+padding: 0.5rem 1rem;
+border-radius: 9999px;
+border: 1px solid var(--border-light);
+background: var(--card-bg-light);
+color: inherit;
+text-decoration: none;
+transition: background-color 0.3s;
+}
+body.dark .chips a {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+.chips a:hover {
+background-color: var(--border-light);
+}
+body.dark .chips a:hover {
+background-color: var(--border-dark);
+}
+
+/* Social icons in the footer */
+.social-icons {
+margin-top: 0.5rem;
+display: flex;
+gap: 0.5rem;
+}
+.social-icons a {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 24px;
+height: 24px;
+color: inherit;
+text-decoration: none;
+transition: color 0.3s;
+}
+.social-icons a:hover {
+color: var(--accent);
+}
+
+/* Video link styling: small pill buttons within video cards */
+.video-links {
+display: flex;
+flex-wrap: wrap;
+gap: 0.25rem;
+margin-top: 0.5rem;
+}
+.video-links a {
+padding: 0.15rem 0.4rem;
+border: 1px solid var(--border-light);
+border-radius: 0.25rem;
+text-decoration: none;
+color: inherit;
+font-size: 0.75rem;
+background: var(--card-bg-light);
+}
+body.dark .video-links a {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+.video-links a:hover {
+background: var(--border-light);
+}
+body.dark .video-links a:hover {
+background: var(--border-dark);
+}
+
+/* Moon icon fill and stroke for visibility */
+/* The moon icon always has a white fill with a black stroke.  This
+    avoids a dark background on the icon and ensures it remains
+    visible in both light and dark modes. */
+#icon-moon {
+fill: #ffffff;
+stroke: #000000;
+}
+body.dark #icon-moon {
+fill: #ffffff;
+stroke: #000000;
+}
+main {
+flex: 1;
+padding: 0 2rem 2rem;
+}
+section {
+margin-bottom: 3rem;
+}
+h2 {
+margin-bottom: 1rem;
+border-bottom: 4px solid var(--accent);
+width: fit-content;
+font-size: 1.5rem;
+}
+.cards {
+display: grid;
+gap: 1rem;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.card {
+padding: 1rem;
+border: 1px solid var(--border-light);
+background: var(--card-bg-light);
+border-radius: 0.5rem;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+text-decoration: none;
+color: inherit;
+display: block;
+transition: box-shadow 0.3s;
+    cursor: pointer;
+}
+body.dark .card {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+.card:hover {
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+background-color: var(--border-light);
+}
+body.dark .card:hover {
+background-color: var(--border-dark);
+}
+#usaco-container {
+display: grid;
+grid-template-columns: 1fr;
+gap: 1rem;
+}
+/* When the viewer is open, split container into two equal columns */
+#usaco-container.viewer-open {
+grid-template-columns: 1fr 1fr;
+}
+#usaco-list {
+/* no explicit flex basis here; width will be managed by the grid */
+}
+#usaco-viewer {
+border: 1px solid var(--border-light);
+border-radius: 0.5rem;
+display: none;
+flex-direction: column;
+}
+body.dark #usaco-viewer {
+border-color: var(--border-dark);
+}
+#viewer-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: var(--card-bg-light);
+padding: 0.5rem;
+border-bottom: 1px solid var(--border-light);
+}
+body.dark #viewer-header {
+background: var(--card-bg-dark);
+border-bottom-color: var(--border-dark);
+}
+#viewer-header .viewer-controls {
+display: flex;
+gap: 0.25rem;
+align-items: center;
+}
+#viewer-header input {
+padding: 0.25rem;
+border: 1px solid var(--border-light);
+border-radius: 0.25rem;
+width: 6rem;
+background: inherit;
+color: inherit;
+}
+body.dark #viewer-header input {
+border-color: var(--border-dark);
+}
+#viewer-header button {
+padding: 0.25rem 0.5rem;
+border: 1px solid var(--border-light);
+border-radius: 0.25rem;
+background: var(--card-bg-light);
+color: inherit;
+cursor: pointer;
+}
+body.dark #viewer-header button {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+#viewer-header button:hover {
+background: var(--border-light);
+}
+body.dark #viewer-header button:hover {
+background: var(--border-dark);
+}
+#viewer-content {
+flex: 1;
+/* Allow both horizontal and vertical scrolling.  Without explicit
+    horizontal overflow set, long lines cannot be scrolled. */
+overflow-x: auto;
+overflow-y: auto;
+background: var(--bg-light);
+padding: 1rem;
+font-family: monospace;
+font-size: 0.875rem;
+/* Preserve spacing within code lines */
+/* Each code span will have white-space: pre defined separately */
+}
+
+body.dark #viewer-content {
+background: var(--bg-dark);
+}
+#viewer-content span.select-none {
+user-select: none;
+margin-right: 1rem;
+color: var(--border-dark);
+}
+body.dark #viewer-content span.select-none {
+color: var(--border-light);
+}
+/* Code viewer rows and code text */
+#viewer-content .code-row {
+    display: flex;
+}
+#viewer-content .code {
+    white-space: pre;
+    /* Let long lines extend and rely on the parent container to provide
+    horizontal scrolling.  The flex-grow property allows the code
+    portion to take up the remaining space.  A minimum width of
+    zero prevents the element from overflowing its container. */
+    flex-grow: 1;
+    min-width: 0;
+}
+mark {
+background: yellow;
+color: black;
+}
+footer {
+padding: 1rem 2rem;
+border-top: 1px solid var(--border-light);
+font-size: 0.875rem;
+color: var(--border-dark);
+}
+body.dark footer {
+border-top-color: var(--border-dark);
+color: var(--border-light);
+}
+/* Prism token colours for syntax highlighting */
+/*
+* To support syntax highlighting without relying on external CDNs,
+* we embed PrismJS locally and define colours for its token classes.
+* Colours roughly follow the palette used throughout the page.
+*/
+.token.comment { color: var(--border-dark); }
+body.dark .token.comment { color: var(--border-light); }
+.token.string { color: #10b981; }
+.token.keyword { color: #8b5cf6; }
+.token.number { color: #f97316; }
+.token.function { color: #60a5fa; }
+.token.class-name { color: #8b5cf6; }
+.token.operator, .token.punctuation { color: inherit; }
+/* USACO list rows and buttons styling */
+#usaco-list .row {
+margin-bottom: 0.5rem;
+border: 1px solid var(--border-light);
+background: var(--card-bg-light);
+border-radius: 0.5rem;
+padding: 0.5rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+body.dark #usaco-list .row {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+#usaco-list .row:last-child {
+margin-bottom: 0;
+}
+#usaco-list .buttons {
+display: flex;
+gap: 0.5rem;
+}
+#usaco-list .buttons button,
+#usaco-list .buttons a {
+padding: 0.25rem 0.5rem;
+border: 1px solid var(--border-light);
+border-radius: 0.25rem;
+background: var(--card-bg-light);
+color: inherit;
+text-decoration: none;
+cursor: pointer;
+font-size: 0.8rem;
+}
+body.dark #usaco-list .buttons button,
+body.dark #usaco-list .buttons a {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+#usaco-list .buttons button:hover,
+#usaco-list .buttons a:hover {
+background: var(--border-light);
+}
+body.dark #usaco-list .buttons button:hover,
+body.dark #usaco-list .buttons a:hover {
+background: var(--border-dark);
+}
+.inspired {
+font-size: 0.85rem;
+opacity: 0.8;
+width: 100%;
+max-width: 380px;
+margin-top: 0.5rem;
+text-align: center;
+align-self: flex-start;
+}
+
+/* Style the attribution link to look like a minimal pill button. */
+.inspired a {
+display: inline-block;
+padding: 0.1rem 0.5rem;
+border-radius: 0.25rem;
+border: 1px solid var(--border-light);
+background: var(--card-bg-light);
+color: inherit;
+text-decoration: none;
+transition: background-color 0.3s;
+}
+body.dark .inspired a {
+border-color: var(--border-dark);
+background: var(--card-bg-dark);
+}
+.inspired a:hover {
+background: var(--border-light);
+}
+body.dark .inspired a:hover {
+background: var(--border-dark);
+}
+
+/* Responsive tweaks for mobile devices.  When the viewport width
+    drops below 768px, stack the hero layout vertically and
+    adjust margins so that the ASCII viewer appears below the
+    introductory text.  Additionally, ensure the viewer uses the
+    full width of its container on small screens. */
+@media (max-width: 768px) {
+header {
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+}
+.hero-left {
+    margin-right: 0;
+}
+.hero-right {
+    align-items: center;
+}
+#torus-viewer {
+    max-width: 100%;
+    margin: 0 auto;
+}
+}
