@@ -32,10 +32,15 @@
       }
       header {
         padding: 2rem;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        justify-content: space-between;
+        /* Use a two‑column grid for the hero so that the intro text/chips occupy
+           the first column and the ASCII viewer occupies the second.  This
+           guarantees they sit side‑by‑side on larger screens.  On narrow
+           screens the columns will wrap to a single column. */
+        display: grid;
+        grid-template-columns: 1fr auto;
+        column-gap: 2rem;
+        align-items: start;
+        justify-content: start;
       }
        /* Dark/light toggle button styling */
        #theme-toggle {
@@ -100,7 +105,10 @@
       }
       .hero-right {
         flex: 1;
+        /* Layout the ASCII viewer and its caption vertically.  Center both horizontally
+           and vertically within this column. */
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         min-width: 250px;
@@ -325,7 +333,7 @@
          /* Preserve spacing within code lines */
          /* Each code span will have white-space: pre defined separately */
       }
-      #viewer-content .code-row { overflow-x: auto; }
+       #viewer-content .code-row { /* allow horizontal overflow on long lines */ }
       
       body.dark #viewer-content {
         background: var(--bg-dark);
@@ -344,6 +352,12 @@
        }
        #viewer-content .code {
          white-space: pre;
+         /* Allow horizontal scrolling within each code cell.  When a line
+            exceeds the available width, users can scroll horizontally to
+            view the remainder of the line. */
+         overflow-x: auto;
+         display: block;
+         flex-grow: 1;
        }
       mark {
         background: yellow;
@@ -423,6 +437,8 @@
         font-size: 0.85rem;
         opacity: 0.8;
         margin-top: 0.5rem;
+        text-align: center;
+        width: 100%;
       }
     </style>
     <!-- PrismJS scripts removed: using custom highlighter instead -->
@@ -449,6 +465,8 @@
           <a href="#videos">Videos</a>
           <a href="#misc">Miscellaneous</a>
         </div>
+      </div><!-- close hero-left -->
+      <!-- Place the D viewer on the right side of the hero.  It sits next to the intro/chips rather than below them. -->
       <div class="hero-right">
         <pre id="torus-viewer" aria-label="ASCII D"></pre>
         <div class="inspired">
@@ -790,21 +808,25 @@
       // state resets.
       function renderViewer() {
         const contentEl = document.getElementById('viewer-content');
-      
-        // 1) Produce highlighted HTML (this function already escapes the raw code)
-        const highlighted = simpleHighlightCpp(currentRaw);
-      
-        // 2) Split into lines *after* highlighting so tokens survive per line
-        const lines = highlighted.split(/\n/);
-      
-        // 3) Build rows — DO NOT escape again; we want the token spans to render
+        // Remove any stray HTML tags from the raw code (e.g. token markup) to
+        // ensure only pure code remains.  Then escape special characters so
+        // they render correctly.
+        const cleaned = currentRaw.replace(/<[^>]*>/g, '');
+        const escaped = cleaned
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        // Split on newlines to build code rows.  We intentionally avoid any
+        // syntax highlighting here to ensure the viewer never shows stray
+        // HTML tags or broken markup.  Each row contains a line number and
+        // the escaped code for that line.
+        const lines = escaped.split(/\n/);
         const htmlLines = lines.map((line, idx) => {
           return '<div class="code-row">' +
                    '<span class="select-none">' + (idx + 1) + '</span>' +
                    '<span class="code">' + line + '</span>' +
                  '</div>';
         });
-      
         contentEl.innerHTML = htmlLines.join('');
       }
       // Close viewer
@@ -896,7 +918,9 @@
         let A = 0, B = 0; // rotation angles
         let auto = true;
       
-        const W = 60, H = 26;     // ascii grid size
+        // Increase grid resolution so the 3D 'D' is more visible.  A wider and
+        // taller grid yields a larger rendered shape.
+        const W = 80, H = 40;     // ascii grid size
         const zbufSize = W * H;
       
         // Build point cloud for a 3D 'D' (extruded outline):
@@ -904,12 +928,12 @@
         // - outer semicircle radius = r
         // - inner radius rInner = r - t (hole)
         // - extruded depth along z in [-extrude, extrude]
-        const r = 8;            // radius of curved part
-        const t = 3;            // thickness of vertical bar
-        const height = 18;      // total height (|y| <= height/2)
-        const extrude = 3;      // half-depth
-        const stepCurve = 0.12; // angular sampling
-        const stepZ = 1.0;
+        const r = 12;           // radius of curved part
+        const t = 4;            // thickness of vertical bar
+        const height = 24;      // total height (|y| <= height/2)
+        const extrude = 4;      // half-depth
+        const stepCurve = 0.08; // finer angular sampling
+        const stepZ = 0.8;      // finer depth sampling
       
         const points = [];  // each: {pos:[x,y,z], norm:[nx,ny,nz]}
       
