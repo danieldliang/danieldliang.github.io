@@ -581,6 +581,28 @@
          localStorage.setItem('theme', newTheme);
        });
 
+      // Simple C++ syntax highlighter. This function escapes HTML and then wraps keywords, strings, comments, numbers and types with spans.
+      function highlightCpp(raw) {
+        // Escape HTML special characters first
+        let escaped = raw
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        // Highlight strings (double or single quotes)
+        escaped = escaped.replace(/("([^"\\]|\\.)*"|'([^'\\]|\\.)*')/g, '<span class="text-emerald-500">$1</span>');
+        // Highlight comments (//... and /* ... */)
+        escaped = escaped.replace(/(\/\/.*?$|\/\*[\s\S]*?\*\/)/gm, '<span class="text-gray-500">$1</span>');
+        // Highlight keywords
+        const keywordRegex = /\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b/g;
+        escaped = escaped.replace(keywordRegex, '<span class="text-purple-500">$1</span>');
+        // Highlight built-in types (common STL containers etc.)
+        const typeRegex = /\b(vector|string|map|set|unordered_map|unordered_set|pair|queue|stack|priority_queue|list|deque|array|tuple)\b/g;
+        escaped = escaped.replace(typeRegex, '<span class="text-blue-400">$1</span>');
+        // Highlight numbers
+        escaped = escaped.replace(/\b(\d+)(\.?\d*)\b/g, '<span class="text-orange-500">$1$2</span>');
+        return escaped;
+      }
+
       // Build blog cards from embedded list
       function loadBlog() {
         const container = document.getElementById('blog-cards');
@@ -766,26 +788,21 @@
       // state resets.
       function renderViewer() {
         const contentEl = document.getElementById('viewer-content');
-        // Highlight the raw C++ source using Prism.  If Prism is not
-        // loaded, fall back to simply escaping HTML to avoid
-        // displaying markup.  Prism.highlight() returns an HTML
-        // string with <span class="token ..."> tags for syntax.
-        // Use the custom highlighter to produce an HTML string containing
-        // escaped and highlighted code.  simpleHighlightCpp() escapes
-        // any HTML and inserts <span class="token ..."> tags.
-        // Escape raw source for safe HTML display.  Syntax highlighting
-        // can introduce unexpected markup if the highlighter fails,
-        // so we stick to plain code here.  Replace special characters
-        // with HTML entities before splitting into lines.
-        const escaped = currentRaw
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-        const lines = escaped.split(/\n/);
+      
+        // 1) Produce highlighted HTML (this function already escapes the raw code)
+        const highlighted = simpleHighlightCpp(currentRaw);
+      
+        // 2) Split into lines *after* highlighting so tokens survive per line
+        const lines = highlighted.split(/\n/);
+      
+        // 3) Build rows — DO NOT escape again; we want the token spans to render
         const htmlLines = lines.map((line, idx) => {
-          // Build each line with a non-selectable line number and the code itself.
-          return '<div class="code-row"><span class="select-none">' + (idx + 1) + '</span><span class="code">' + line + '</span></div>';
+          return '<div class="code-row">' +
+                   '<span class="select-none">' + (idx + 1) + '</span>' +
+                   '<span class="code">' + line + '</span>' +
+                 '</div>';
         });
+      
         contentEl.innerHTML = htmlLines.join('');
       }
       // Close viewer
