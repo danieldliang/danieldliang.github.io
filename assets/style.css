@@ -377,6 +377,9 @@ color: var(--border-light);
     flex-grow: 1;
     min-width: 0;
 }
+#viewer-content .find-hit { background: #ffe58f; border-radius: 2px; }
+#viewer-content .find-hit.active { box-shadow: 0 0 0 2px #7c3aed inset; }
+
 mark {
 background: yellow;
 color: black;
