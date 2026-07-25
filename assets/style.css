@@ -1,509 +1,594 @@
 :root {
---bg-light: #ffffff;
---bg-dark: #0f172a;
---text-light: #1e293b;
---text-dark: #f1f5f9;
---border-light: #e2e8f0;
---border-dark: #334155;
---card-bg-light: rgba(255, 255, 255, 0.8);
---card-bg-dark: rgba(15, 23, 42, 0.8);
---accent: #6ee7b7;
+  color-scheme: light;
+  --bg: #f7f8f4;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-solid: #fff;
+  --text: #18221d;
+  --muted: #66736b;
+  --border: rgba(24, 34, 29, 0.13);
+  --accent: #1e9b70;
+  --accent-bright: #6ee7b7;
+  --accent-soft: rgba(30, 155, 112, 0.12);
+  --shadow-sm: 0 8px 24px rgba(37, 54, 44, 0.07);
+  --shadow-lg: 0 24px 60px rgba(24, 42, 33, 0.13);
+  --radius: 18px;
 }
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 1rem;
+}
+
 body {
-margin: 0;
-font-family: Arial, sans-serif;
-display: flex;
-flex-direction: column;
-min-height: 100vh;
-background-color: var(--bg-light);
-color: var(--text-light);
-transition: background-color 2s ease, color 2s ease;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 82% 3%, rgba(110, 231, 183, 0.22), transparent 28rem),
+    radial-gradient(circle at 8% 24%, rgba(148, 163, 184, 0.14), transparent 24rem),
+    var(--bg);
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: color 250ms ease, background-color 250ms ease;
 }
+
 body.dark {
-background-color: var(--bg-dark);
-color: var(--text-dark);
+  color-scheme: dark;
+  --bg: #0b1210;
+  --surface: rgba(18, 30, 25, 0.8);
+  --surface-solid: #121e19;
+  --text: #edf7f1;
+  --muted: #9fb0a7;
+  --border: rgba(219, 245, 231, 0.14);
+  --accent: #62d9aa;
+  --accent-bright: #8af0c7;
+  --accent-soft: rgba(98, 217, 170, 0.13);
+  --shadow-sm: 0 8px 28px rgba(0, 0, 0, 0.22);
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.34);
+  background:
+    radial-gradient(circle at 82% 3%, rgba(31, 157, 112, 0.18), transparent 28rem),
+    radial-gradient(circle at 8% 24%, rgba(71, 85, 105, 0.16), transparent 24rem),
+    var(--bg);
 }
+
+button, input { font: inherit; }
+a, button { -webkit-tap-highlight-color: transparent; }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+#torus-viewer:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 62%, transparent);
+  outline-offset: 3px;
+}
+
+header, main, footer {
+  width: min(1180px, 100%);
+  margin-inline: auto;
+}
+
 header {
-padding: 2rem;
-/* Lay out the hero in two columns: the intro text/chips and the
-    ASCII viewer.  The left column contains the text and chips
-    while the right column contains the ASCII viewer.  To reduce
-    the white space between the columns, we slightly narrow the gap
-    and gently adjust the column proportions so the viewer starts
-    a bit farther to the left.  On narrow screens the grid
-    collapses to a single column. */
-display: grid;
-grid-template-columns: 3fr 2fr;
-/* Allocate a slightly larger portion of the header to the right
-    column (the ASCII viewer) relative to the left.  This
-    arrangement pulls the viewer closer to the text while
-    preserving balance. */
-column-gap: 0.5rem;
-align-items: start;
-justify-content: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem);
 }
-/* Dark/light toggle button styling */
-#theme-toggle {
-    /* Center the icon in a circular button with a transparent fill.
-    The button has only a border so the background does not
-    obscure the moon icon. */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1px solid var(--border-light);
-    background: transparent;
-    cursor: pointer;
-    margin-right: 0.5rem;
-    padding: 0;
-    transition: background-color 0.3s, border-color 0.3s;
-    position: relative;
-}
-body.dark #theme-toggle {
-    border-color: var(--border-dark);
-    background: transparent;
-}
-#theme-toggle:hover {
-    background-color: var(--border-light);
-}
-body.dark #theme-toggle:hover {
-    background-color: var(--border-dark);
-}
-/* position is set on the same definition as the sizing above; no need to repeat */
-#theme-toggle svg {
-    /* Overlay the sun and moon icons directly on top of each
-    other.  They inherit currentColor for stroke/fill and are
-    centered via absolute positioning.  Opacity transitions
-    handle the cross fade. */
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    stroke: currentColor;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.7s ease;
-}
-/* Sun/moon icon opacity transitions */
-#icon-sun { opacity: 1; }
-#icon-moon { opacity: 0; }
-body.dark #icon-sun { opacity: 0; }
-body.dark #icon-moon { opacity: 1; }
-.hero-text {
-/* .hero-text is deprecated; replaced by .hero-left for clarity. */
-}
-/* New hero layout splits the header into left (intro and chips) and right (D viewer). */
+
 .hero-left {
-flex: 1;
-max-width: 600px;
-/* Keep a modest margin between the text column and the viewer. */
-margin-right: 0.5rem;
-display: flex;
-flex-direction: column;
-gap: 1rem;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1.35rem;
 }
+
+.hero-left::before {
+  content: "HELLO, WORLD";
+  width: fit-content;
+  padding: 0.28rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.15em;
+}
+
+h1 {
+  max-width: 13ch;
+  margin: 0;
+  font-size: clamp(2.7rem, 6vw, 5.5rem);
+  font-weight: 760;
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+}
+
+.hero-left > p {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.8vw, 1.17rem);
+}
+
 .hero-right {
-flex: 1;
-/* Layout the ASCII viewer and its caption vertically.  Align
-    contents to the start to shift the viewer towards the
-    beginning of its column. */
-display: flex;
-flex-direction: column;
-align-items: flex-start;
-justify-content: center;
-/* Allow the right column to shrink when space is limited. */
-min-width: 200px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
 }
+
 #torus-viewer {
-font-family: monospace;
-/* Use a smaller font so the 3D letter fits neatly within its
-    container.  A compressed line height reduces the vertical space
-    without changing the aspect ratio. */
-font-size: 0.6rem;
-line-height: 0.6rem;
-white-space: pre;
-cursor: grab;
-user-select: none;
-border: 1px solid var(--border-light);
-border-radius: 0.5rem;
-padding: 0.5rem;
-background: var(--card-bg-light);
-/* Fill the column horizontally while preserving a sensible maximum
-    width.  The height adjusts automatically based on the number
-    of rows rendered. */
-width: 100%;
-max-width: 380px;
-/* Do not centre the viewer horizontally; align it to the
-    left of its column to reduce the perceived whitespace
-    between the viewer and the text. */
-margin: 0;
-min-width: 0;
-}
-body.dark #torus-viewer {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-.chips {
-display: flex;
-gap: 0.5rem;
-flex-wrap: wrap;
-align-items: center;
-margin-top: 0.5rem;
-}
-.chips a {
-padding: 0.5rem 1rem;
-border-radius: 9999px;
-border: 1px solid var(--border-light);
-background: var(--card-bg-light);
-color: inherit;
-text-decoration: none;
-transition: background-color 0.3s;
-}
-body.dark .chips a {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-.chips a:hover {
-background-color: var(--border-light);
-}
-body.dark .chips a:hover {
-background-color: var(--border-dark);
+  width: 100%;
+  min-height: 250px;
+  margin: 0;
+  padding: clamp(1rem, 2.8vw, 1.8rem);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: clamp(20px, 4vw, 32px);
+  color: var(--accent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-solid) 90%, transparent), var(--surface)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(30, 155, 112, 0.03) 3px 4px);
+  box-shadow: var(--shadow-lg), inset 0 1px rgba(255, 255, 255, 0.45);
+  font: 650 clamp(0.38rem, 0.78vw, 0.64rem)/0.76 ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.01em;
+  white-space: pre;
+  user-select: none;
+  cursor: grab;
+  touch-action: none;
+  contain: layout paint style;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
-/* Social icons in the footer */
-.social-icons {
-margin-top: 0.5rem;
-display: flex;
-gap: 0.5rem;
-}
-.social-icons a {
-display: inline-flex;
-align-items: center;
-justify-content: center;
-width: 24px;
-height: 24px;
-color: inherit;
-text-decoration: none;
-transition: color 0.3s;
-}
-.social-icons a:hover {
-color: var(--accent);
+#torus-viewer:hover,
+#torus-viewer:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--border));
+  box-shadow: var(--shadow-lg), 0 0 0 5px var(--accent-soft);
+  transform: translateY(-2px);
 }
 
-/* Video link styling: small pill buttons within video cards */
-.video-links {
-display: flex;
-flex-wrap: wrap;
-gap: 0.25rem;
-margin-top: 0.5rem;
-}
-.video-links a {
-padding: 0.15rem 0.4rem;
-border: 1px solid var(--border-light);
-border-radius: 0.25rem;
-text-decoration: none;
-color: inherit;
-font-size: 0.75rem;
-background: var(--card-bg-light);
-}
-body.dark .video-links a {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-.video-links a:hover {
-background: var(--border-light);
-}
-body.dark .video-links a:hover {
-background: var(--border-dark);
+#torus-viewer.is-dragging {
+  cursor: grabbing;
+  transform: scale(0.995);
 }
 
-/* Moon icon fill and stroke for visibility */
-/* The moon icon always has a white fill with a black stroke.  This
-    avoids a dark background on the icon and ensures it remains
-    visible in both light and dark modes. */
-#icon-moon {
-fill: #ffffff;
-stroke: #000000;
-}
-body.dark #icon-moon {
-fill: #ffffff;
-stroke: #000000;
-}
-main {
-flex: 1;
-padding: 0 2rem 2rem;
-}
-section {
-margin-bottom: 3rem;
-}
-h2 {
-margin-bottom: 1rem;
-border-bottom: 4px solid var(--accent);
-width: fit-content;
-font-size: 1.5rem;
-}
-.cards {
-display: grid;
-gap: 1rem;
-grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-.card {
-padding: 1rem;
-border: 1px solid var(--border-light);
-background: var(--card-bg-light);
-border-radius: 0.5rem;
-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-text-decoration: none;
-color: inherit;
-display: block;
-transition: box-shadow 0.3s;
-    cursor: pointer;
-}
-body.dark .card {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-.card:hover {
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-background-color: var(--border-light);
-}
-body.dark .card:hover {
-background-color: var(--border-dark);
-}
-#usaco-container {
-display: grid;
-grid-template-columns: 1fr;
-gap: 1rem;
-}
-/* When the viewer is open, split container into two equal columns */
-#usaco-container.viewer-open {
-grid-template-columns: 1fr 1fr;
-}
-#usaco-list {
-/* no explicit flex basis here; width will be managed by the grid */
-}
-#usaco-viewer {
-border: 1px solid var(--border-light);
-border-radius: 0.5rem;
-display: none;
-flex-direction: column;
-}
-body.dark #usaco-viewer {
-border-color: var(--border-dark);
-}
-#viewer-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-background: var(--card-bg-light);
-padding: 0.5rem;
-border-bottom: 1px solid var(--border-light);
-}
-body.dark #viewer-header {
-background: var(--card-bg-dark);
-border-bottom-color: var(--border-dark);
-}
-#viewer-header .viewer-controls {
-display: flex;
-gap: 0.25rem;
-align-items: center;
-}
-#viewer-header input {
-padding: 0.25rem;
-border: 1px solid var(--border-light);
-border-radius: 0.25rem;
-width: 6rem;
-background: inherit;
-color: inherit;
-}
-body.dark #viewer-header input {
-border-color: var(--border-dark);
-}
-#viewer-header button {
-padding: 0.25rem 0.5rem;
-border: 1px solid var(--border-light);
-border-radius: 0.25rem;
-background: var(--card-bg-light);
-color: inherit;
-cursor: pointer;
-}
-body.dark #viewer-header button {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-#viewer-header button:hover {
-background: var(--border-light);
-}
-body.dark #viewer-header button:hover {
-background: var(--border-dark);
-}
-#viewer-content {
-flex: 1;
-/* Allow both horizontal and vertical scrolling.  Without explicit
-    horizontal overflow set, long lines cannot be scrolled. */
-overflow-x: auto;
-overflow-y: auto;
-background: var(--bg-light);
-padding: 1rem;
-font-family: monospace;
-font-size: 0.875rem;
-/* Preserve spacing within code lines */
-/* Each code span will have white-space: pre defined separately */
-}
-
-body.dark #viewer-content {
-background: var(--bg-dark);
-}
-#viewer-content span.select-none {
-user-select: none;
-margin-right: 1rem;
-color: var(--border-dark);
-}
-body.dark #viewer-content span.select-none {
-color: var(--border-light);
-}
-/* Code viewer rows and code text */
-#viewer-content .code-row {
-    display: flex;
-}
-#viewer-content .code {
-    white-space: pre;
-    /* Let long lines extend and rely on the parent container to provide
-    horizontal scrolling.  The flex-grow property allows the code
-    portion to take up the remaining space.  A minimum width of
-    zero prevents the element from overflowing its container. */
-    flex-grow: 1;
-    min-width: 0;
-}
-#viewer-content .find-hit { background: #ffe58f; border-radius: 2px; }
-#viewer-content .find-hit.active { box-shadow: 0 0 0 2px #7c3aed inset; }
-
-mark {
-background: yellow;
-color: black;
-}
-footer {
-padding: 1rem 2rem;
-border-top: 1px solid var(--border-light);
-font-size: 0.875rem;
-color: var(--border-dark);
-}
-body.dark footer {
-border-top-color: var(--border-dark);
-color: var(--border-light);
-}
-/* Prism token colours for syntax highlighting */
-/*
-* To support syntax highlighting without relying on external CDNs,
-* we embed PrismJS locally and define colours for its token classes.
-* Colours roughly follow the palette used throughout the page.
-*/
-.token.comment { color: var(--border-dark); }
-body.dark .token.comment { color: var(--border-light); }
-.token.string { color: #10b981; }
-.token.keyword { color: #8b5cf6; }
-.token.number { color: #f97316; }
-.token.function { color: #60a5fa; }
-.token.class-name { color: #8b5cf6; }
-.token.operator, .token.punctuation { color: inherit; }
-/* USACO list rows and buttons styling */
-#usaco-list .row {
-margin-bottom: 0.5rem;
-border: 1px solid var(--border-light);
-background: var(--card-bg-light);
-border-radius: 0.5rem;
-padding: 0.5rem;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-body.dark #usaco-list .row {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-#usaco-list .row:last-child {
-margin-bottom: 0;
-}
-#usaco-list .buttons {
-display: flex;
-gap: 0.5rem;
-}
-#usaco-list .buttons button,
-#usaco-list .buttons a {
-padding: 0.25rem 0.5rem;
-border: 1px solid var(--border-light);
-border-radius: 0.25rem;
-background: var(--card-bg-light);
-color: inherit;
-text-decoration: none;
-cursor: pointer;
-font-size: 0.8rem;
-}
-body.dark #usaco-list .buttons button,
-body.dark #usaco-list .buttons a {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-#usaco-list .buttons button:hover,
-#usaco-list .buttons a:hover {
-background: var(--border-light);
-}
-body.dark #usaco-list .buttons button:hover,
-body.dark #usaco-list .buttons a:hover {
-background: var(--border-dark);
-}
 .inspired {
-font-size: 0.85rem;
-opacity: 0.8;
-width: 100%;
-max-width: 380px;
-margin-top: 0.5rem;
-text-align: center;
-align-self: flex-start;
+  margin-top: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.8rem;
 }
 
-/* Style the attribution link to look like a minimal pill button. */
 .inspired a {
-display: inline-block;
-padding: 0.1rem 0.5rem;
-border-radius: 0.25rem;
-border: 1px solid var(--border-light);
-background: var(--card-bg-light);
-color: inherit;
-text-decoration: none;
-transition: background-color 0.3s;
-}
-body.dark .inspired a {
-border-color: var(--border-dark);
-background: var(--card-bg-dark);
-}
-.inspired a:hover {
-background: var(--border-light);
-}
-body.dark .inspired a:hover {
-background: var(--border-dark);
+  color: inherit;
+  font-weight: 700;
+  text-underline-offset: 3px;
 }
 
-/* Responsive tweaks for mobile devices.  When the viewport width
-    drops below 768px, stack the hero layout vertically and
-    adjust margins so that the ASCII viewer appears below the
-    introductory text.  Additionally, ensure the viewer uses the
-    full width of its container on small screens. */
-@media (max-width: 768px) {
-header {
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.58rem;
+}
+
+.chips a, #theme-toggle {
+  height: 40px;
+  border: 1px solid var(--border);
+  color: inherit;
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(28, 42, 34, 0.035);
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.chips a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.chips a:hover, #theme-toggle:hover {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--border));
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+#theme-toggle {
+  position: relative;
+  width: 40px;
+  flex: 0 0 40px;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#theme-toggle svg {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transition: opacity 180ms ease, transform 260ms ease;
+}
+
+#icon-sun { opacity: 1; }
+#icon-moon {
+  opacity: 0;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+body.dark #icon-sun {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(60deg) scale(0.72);
+}
+
+body.dark #icon-moon {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
+}
+
+main {
+  flex: 1;
+  padding: 0 clamp(1.25rem, 5vw, 4rem) 4rem;
+}
+
+section {
+  padding: clamp(1.8rem, 4vw, 3.2rem) 0;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 420px;
+}
+
+h2 {
+  position: relative;
+  width: fit-content;
+  margin: 0 0 1.4rem;
+  padding-bottom: 0.42rem;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 42%;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+}
+
+section > p {
+  margin: -0.65rem 0 1.4rem;
+  color: var(--muted);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 1rem;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  padding: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: inherit;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.card::after {
+  content: "↗";
+  position: absolute;
+  right: 1rem;
+  bottom: 0.8rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.card:hover::after {
+  opacity: 1;
+  transform: translate(0);
+}
+
+.card h3 {
+  margin: 0 0 0.55rem;
+  padding-right: 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.video-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.video-links a {
+  padding: 0.28rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: inherit;
+  background: var(--accent-soft);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+#usaco-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+#usaco-container.viewer-open {
+  grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.25fr);
+  align-items: start;
+}
+
+#usaco-list .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+  padding: 0.72rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+#usaco-list .row:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  transform: translateX(2px);
+}
+
+#usaco-list .buttons,
+#viewer-header .viewer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#usaco-list .buttons button,
+#usaco-list .buttons a,
+#viewer-header button {
+  padding: 0.3rem 0.58rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: inherit;
+  background: var(--surface-solid);
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+#usaco-list .buttons button:hover,
+#usaco-list .buttons a:hover,
+#viewer-header button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+#usaco-viewer {
+  display: none;
+  min-width: 0;
+  max-height: min(76vh, 760px);
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-solid);
+  box-shadow: var(--shadow-lg);
+}
+
+#viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+#viewer-filename {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+#viewer-header input {
+  width: 7rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: inherit;
+  background: var(--surface-solid);
+}
+
+#viewer-content {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  background: var(--surface-solid);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.82rem;
+  scrollbar-color: var(--muted) transparent;
+}
+
+#viewer-content .code-row { display: flex; }
+#viewer-content .code {
+  min-width: 0;
+  flex-grow: 1;
+  white-space: pre;
+}
+
+#viewer-content span.select-none {
+  margin-right: 1rem;
+  color: var(--muted);
+  user-select: none;
+}
+
+#viewer-content .find-hit, mark {
+  border-radius: 3px;
+  color: #18221d;
+  background: #fde68a;
+}
+
+#viewer-content .find-hit.active { box-shadow: 0 0 0 2px #7c3aed inset; }
+.token.comment { color: var(--muted); }
+.token.string { color: #10b981; }
+.token.keyword, .token.class-name { color: #8b5cf6; }
+.token.number { color: #f97316; }
+.token.function { color: #3b82f6; }
+.token.operator, .token.punctuation { color: inherit; }
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem clamp(1.25rem, 5vw, 4rem) 2.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+footer p { margin: 0; }
+.social-icons {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.social-icons a {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: inherit;
+  background: var(--surface);
+  transition: color 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+.social-icons a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.social-icons svg {
+  width: 17px;
+  height: 17px;
+}
+
+@media (max-width: 820px) {
+  header {
     grid-template-columns: 1fr;
-    row-gap: 1rem;
+    gap: 2rem;
+    padding-top: 3rem;
+  }
+
+  h1 { max-width: 10ch; }
+  .hero-right {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  #torus-viewer {
+    min-height: 220px;
+    font-size: clamp(0.34rem, 1.35vw, 0.58rem);
+  }
+
+  #usaco-container.viewer-open { grid-template-columns: 1fr; }
+  #viewer-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
-.hero-left {
-    margin-right: 0;
+
+@media (max-width: 520px) {
+  header, main { padding-inline: 1rem; }
+  .chips { gap: 0.42rem; }
+  .chips a {
+    padding-inline: 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  #torus-viewer {
+    min-height: 178px;
+    padding: 0.55rem;
+    border-radius: 20px;
+    font-size: min(1.5vw, 0.46rem);
+  }
+
+  #usaco-list .row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  footer { align-items: flex-start; }
 }
-.hero-right {
-    align-items: center;
-}
-#torus-viewer {
-    max-width: 100%;
-    margin: 0 auto;
-}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

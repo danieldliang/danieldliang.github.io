@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daniel's Website</title>
+    <title>Daniel Liang — Computing, Research & Notes</title>
+    <meta name="description" content="Daniel Liang's personal site: computing, research, algorithms, videos, and occasional notes." />
     <link rel="stylesheet" href="assets/style.css">
     <!-- Load PrismJS for syntax highlighting.  The cpp component provides
          C++ grammar definitions used by Prism.highlight().  These scripts
@@ -37,9 +38,9 @@
       </div><!-- close hero-left -->
       <!-- Place the D viewer on the right side of the hero.  It sits next to the intro/chips rather than below them. -->
       <div class="hero-right">
-        <pre id="torus-viewer" aria-label="ASCII D"></pre>
+        <pre id="torus-viewer" role="img" tabindex="0" aria-label="Interactive rotating ASCII letter D. Drag or use the arrow keys to rotate it."></pre>
         <div class="inspired">
-          Inspired by <a href="https://www.a1k0n.net/2011/07/20/donut-math.html" target="_blank" rel="noopener">a1k0n</a>
+          Drag to rotate · Inspired by <a href="https://www.a1k0n.net/2011/07/20/donut-math.html" target="_blank" rel="noopener">a1k0n</a>
         </div>
       </div>
     </header>
@@ -54,7 +55,7 @@
       <!-- USACO Section -->
       <section id="usaco">
         <h2>Algorithms (C++)</h2>
-        <p>Tip: Click 'View' to open code side‑by‑side. 'Close' returns to the full‑width list.</p>
+        <p>Tip: Click “View” to open code side-by-side. “Close” returns to the full-width list.</p>
         <div id="usaco-container">
           <!-- Algorithm list column -->
           <div id="usaco-list">
@@ -552,8 +553,13 @@
       
         let dragging = false;
         let lastX = 0, lastY = 0;
-        let A = 0, B = 0; // rotation angles
+        let A = -0.45, B = 0.2; // rotation angles
         let auto = true;
+        let visible = true;
+        let frameRequest = 0;
+        let lastFrame = 0;
+        let dirty = true;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       
         // Increase grid resolution so the 3D 'D' is more visible.  A wider and
         // taller grid yields a larger rendered shape.  These values were
@@ -673,40 +679,17 @@
         }
       
         function shade(n){
-          // simple Lambert shading with light pointing toward viewer (0,0,1)
-          // Scale the normal's z component into the range [0,1] and apply
-          // a mild exponent to favour darker glyphs on surfaces that do
-          // not face the viewer directly.  A larger exponent yields
-          // lower brightness values for shallow angles, creating a
-          // darker overall appearance.  Adjust the offset and divisor
-          // to tune ambient light.
-          // Offset and scale the normal's z component into [0,1] to
-          // compute a base diffuse term.  We add a slightly larger
-          // offset and divisor to ensure surfaces facing away from
-          // the camera still receive some light.  Then raise the
-          // result to a small exponent (<1) so that a wide range of
-          // normal values map to high brightness.  A smaller
-          // exponent darkens the overall letter by pushing more
-          // values toward 1.0.  Finally, map the brightness to a
-          // reversed character ramp so that larger brightness
-          // selects darker glyphs.  This produces a much darker
-          // rendering of the D and reduces the appearance of light
-          // flat surfaces.
-          let dot = (n[2] + 0.3) / 1.3;
-          if (dot < 0) dot = 0;
-          if (dot > 1) dot = 1;
-          // Use an even smaller exponent to push most brightness
-          // values toward 1.0, making the ASCII letter darker overall.
-          const brightness = Math.pow(dot, 0.05);
+          const light = [-0.35, 0.45, 0.82];
+          const diffuse = Math.max(0, n[0] * light[0] + n[1] * light[1] + n[2] * light[2]);
+          const rim = Math.pow(1 - Math.abs(n[2]), 2) * 0.18;
+          const brightness = Math.min(1, 0.12 + diffuse * 0.78 + rim);
           const ramp = " .:-=+*#%@";
-          return ramp[Math.floor(brightness * (ramp.length - 1))];
+          return ramp[Math.round(brightness * (ramp.length - 1))];
         }
       
-        function frame(){
-          if (auto && !dragging) { A += 0.01; B += 0.005; }
+        function draw(){
           const buf = new Array(W*H).fill(' ');
           const zbuf = new Float32Array(zbufSize);
-          zbuf.fill(0);
       
           for (const p of points){
             const pos = mulRot(p.pos, A, B);
@@ -727,22 +710,95 @@
             outStr += buf.slice(y*W, y*W+W).join('') + "\n";
           }
           out.textContent = outStr;
-          requestAnimationFrame(frame);
+          dirty = false;
         }
       
-        // Drag-to-rotate.  When dragging ends, re-enable auto rotation so
-        // the letter continues to spin.
-        out.addEventListener('mousedown', e=>{ dragging=true; auto=false; lastX=e.clientX; lastY=e.clientY; });
-        window.addEventListener('mouseup', ()=> { dragging=false; auto=true; });
-        window.addEventListener('mousemove', e=>{
+        function scheduleFrame() {
+          if (!frameRequest && visible) frameRequest = requestAnimationFrame(frame);
+        }
+
+        function frame(timestamp){
+          frameRequest = 0;
+          if (!visible || document.hidden) return;
+
+          // A 30 fps cap avoids wasteful full text-node rewrites and looks
+          // steadier than uncapped animation for this intentionally retro UI.
+          if (auto && !dragging && !reducedMotion.matches && timestamp - lastFrame >= 33) {
+            A += 0.018;
+            B = 0.16 + Math.sin(timestamp / 3200) * 0.12;
+            dirty = true;
+            lastFrame = timestamp;
+          }
+          if (dirty) draw();
+          if ((auto && !reducedMotion.matches) || dirty) scheduleFrame();
+        }
+
+        // Pointer events support mouse, touch, and pen consistently.
+        out.addEventListener('pointerdown', e => {
+          dragging = true;
+          auto = false;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          out.setPointerCapture(e.pointerId);
+          out.classList.add('is-dragging');
+        });
+        out.addEventListener('pointerup', e => {
+          dragging = false;
+          auto = true;
+          if (out.hasPointerCapture(e.pointerId)) out.releasePointerCapture(e.pointerId);
+          out.classList.remove('is-dragging');
+          scheduleFrame();
+        });
+        out.addEventListener('pointercancel', () => {
+          dragging = false;
+          auto = true;
+          out.classList.remove('is-dragging');
+          scheduleFrame();
+        });
+        out.addEventListener('pointermove', e => {
           if (!dragging) return;
-          const dx = (e.clientX-lastX)/120;
-          const dy = (e.clientY-lastY)/120;
+          const dx = (e.clientX-lastX)/100;
+          const dy = (e.clientY-lastY)/100;
           A += dx; B += dy;
           lastX = e.clientX; lastY = e.clientY;
+          dirty = true;
+          draw();
         });
-        
-        frame();
+        out.addEventListener('keydown', e => {
+          const turns = { ArrowLeft: [-0.12, 0], ArrowRight: [0.12, 0], ArrowUp: [0, -0.12], ArrowDown: [0, 0.12] };
+          if (!turns[e.key]) return;
+          e.preventDefault();
+          auto = false;
+          A += turns[e.key][0];
+          B += turns[e.key][1];
+          dirty = true;
+          draw();
+        });
+
+        const observer = new IntersectionObserver(([entry]) => {
+          visible = entry.isIntersecting;
+          if (visible) {
+            dirty = true;
+            scheduleFrame();
+          } else if (frameRequest) {
+            cancelAnimationFrame(frameRequest);
+            frameRequest = 0;
+          }
+        }, { threshold: 0.05 });
+        observer.observe(out);
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) {
+            dirty = true;
+            scheduleFrame();
+          }
+        });
+        reducedMotion.addEventListener?.('change', () => {
+          dirty = true;
+          scheduleFrame();
+        });
+
+        draw();
+        scheduleFrame();
       }
 
       // Initialize site
