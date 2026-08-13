@@ -16,7 +16,7 @@
   <body>
     <header>
       <div class="hero-left">
-        <h1>Hello, I'm Daniel Liang.</h1>
+        <h1>Hello, I'm Daniel.</h1>
         <p>I like comp(prog + math), research, gymming, hooping, gaming and some more! Interested in AI and its applications in healthcare, software, and robotics. I blog sometimes.</p>
         <div class="chips">
           <button id="theme-toggle" aria-label="Toggle dark/light mode">
@@ -116,38 +116,14 @@
       const FILE_CACHE = {};
       // Preload algorithm file contents as raw strings. They will be filled by inline script later.
 
-      // Embedded lists of blog posts, videos and miscellaneous items extracted from the
-      // original site. Embedding these here avoids relying on fetch() to load
-      // file:// URLs, which can fail in some browsers. Each entry contains a
-      // title, a short snippet and a URL to the full page or resource.
-      const BLOG_POSTS = [
-        {
-          title: 'Fourth Post: 9/2/2024',
-          snippet: "Alrighty guys, school starts tomorrow. Here's a recap of how my summer went: 1. Attended Garcia. Was a really fun program...",
-          url: 'blog/fourth-post.html'
-        },
-        {
-          title: 'Third Post: 4/19/2024',
-          snippet: "Hello everyone. I remembered I had a blog. Anyways, spring break has begun! Here's a recap of how my junior yr's been going...",
-          url: 'blog/third-post.html'
-        },
-        {
-          title: 'Second Post: 2/9/2024',
-          snippet: 'cool stuff',
-          url: 'blog/second-post.html'
-        },
-        {
-          title: 'First Post: 2/9/2024',
-          snippet: 'First Post! YAY! Hopefully I keep this active. Happy Chinese New Year!',
-          url: 'blog/first-post.html'
-        }
-      ];
+      const BLOG_URL = 'https://ubert.bearblog.dev/';
+      const BLOG_FEED_URL = `${BLOG_URL}feed/?type=rss`;
+      const BLOG_FEED_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(BLOG_FEED_URL)}`;
       const VIDEO_ITEMS = [
         {
           title: 'Inconspicuous Video',
           snippet: 'A short video; nothing to be suspicious of.',
-          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          linkTitles: ['Watch']
+          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
         }
       ];
       const MISC_ITEMS = [
@@ -199,57 +175,80 @@
         return escaped;
       }
 
-      // Build blog cards from embedded list
-      function loadBlog() {
-        const container = document.getElementById('blog-cards');
-        BLOG_POSTS.forEach(post => {
-          const a = document.createElement('a');
-          a.href = post.url;
-          a.target = '_blank';
-          a.className = 'card';
-          const h3 = document.createElement('h3');
-          h3.textContent = post.title;
+      function textFromHtml(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function excerpt(html, maxLength = 180) {
+        const text = textFromHtml(html);
+        if (text.length <= maxLength) return text;
+        return `${text.slice(0, maxLength).replace(/\s+\S*$/, '')}…`;
+      }
+
+      function createLinkedCard({ title, snippet, url }) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.className = 'card';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = title;
+        a.appendChild(h3);
+
+        if (snippet) {
           const p = document.createElement('p');
-          p.textContent = post.snippet;
-          a.appendChild(h3);
+          p.textContent = snippet;
           a.appendChild(p);
-          container.appendChild(a);
-        });
+        }
+
+        return a;
+      }
+
+      // Load current posts from Bear Blog's RSS feed so this page stays in sync.
+      async function loadBlog() {
+        const container = document.getElementById('blog-cards');
+        container.setAttribute('aria-live', 'polite');
+
+        try {
+          const response = await fetch(BLOG_FEED_API);
+          if (!response.ok) throw new Error(`Feed request failed (${response.status})`);
+
+          const feed = await response.json();
+          if (feed.status !== 'ok' || !Array.isArray(feed.items)) {
+            throw new Error('Feed returned an unexpected response');
+          }
+
+          const cards = feed.items.map(post => {
+            const date = new Date(post.pubDate.replace(' ', 'T') + 'Z');
+            const published = Number.isNaN(date.getTime())
+              ? ''
+              : date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            const summary = excerpt(post.description || post.content || '');
+            return createLinkedCard({
+              title: post.title,
+              snippet: [published, summary].filter(Boolean).join(' · '),
+              url: post.link
+            });
+          });
+
+          container.replaceChildren(...cards);
+        } catch (error) {
+          console.error('Unable to load Bear Blog feed:', error);
+          container.replaceChildren(createLinkedCard({
+            title: 'Read my blog',
+            snippet: 'Visit Daniel’s blog on Bear Blog.',
+            url: BLOG_URL
+          }));
+        }
       }
 
       // Build video cards from embedded list
       function loadVideos() {
         const container = document.getElementById('video-cards');
         VIDEO_ITEMS.forEach(item => {
-          // Create a card container instead of making the entire card a link. This
-          // allows us to add small link buttons inside while keeping the card
-          // itself purely informational.
-          const card = document.createElement('div');
-          card.className = 'card';
-          // Title
-          const h3 = document.createElement('h3');
-          h3.textContent = item.title;
-          card.appendChild(h3);
-          // Optional snippet/description
-          if (item.snippet) {
-            const p = document.createElement('p');
-            p.textContent = item.snippet;
-            card.appendChild(p);
-          }
-          // Links container with minimalistic buttons
-          const linksDiv = document.createElement('div');
-          linksDiv.className = 'video-links';
-          // Support multiple links per item by allowing item.url to be a string or an array
-          const urls = Array.isArray(item.url) ? item.url : [item.url];
-          urls.forEach((link, index) => {
-            const linkEl = document.createElement('a');
-            linkEl.href = link;
-            linkEl.target = '_blank';
-            linkEl.textContent = item.linkTitles && item.linkTitles[index] ? item.linkTitles[index] : 'Link';
-            linksDiv.appendChild(linkEl);
-          });
-          card.appendChild(linksDiv);
-          container.appendChild(card);
+          container.appendChild(createLinkedCard(item));
         });
       }
 
