@@ -58,6 +58,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
+#usaco-list .row:focus-visible,
 #torus-viewer:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 62%, transparent);
   outline-offset: 3px;
@@ -344,6 +345,15 @@ section > p {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+#usaco-list .row:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 #usaco-list .buttons,
@@ -354,7 +364,6 @@ section > p {
   gap: 0.35rem;
 }
 
-#usaco-list .buttons button,
 #usaco-list .buttons a,
 #viewer-header button {
   padding: 0.3rem 0.58rem;
@@ -368,7 +377,6 @@ section > p {
   font-weight: 650;
 }
 
-#usaco-list .buttons button:hover,
 #usaco-list .buttons a:hover,
 #viewer-header button:hover {
   border-color: var(--accent);

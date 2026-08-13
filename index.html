@@ -55,7 +55,7 @@
       <!-- USACO Section -->
       <section id="usaco">
         <h2>Algorithms (C++)</h2>
-        <p>Tip: Click “View” to open code side-by-side. “Close” returns to the full-width list.</p>
+        <p>Tip: Click an algorithm tile to open its code side-by-side. “Close” returns to the full-width list.</p>
         <div id="usaco-container">
           <!-- Algorithm list column -->
           <div id="usaco-list">
@@ -276,15 +276,23 @@
         files.forEach(file => {
           const row = document.createElement('div');
           row.className = 'row';
+          row.tabIndex = 0;
+          row.setAttribute('role', 'button');
+          row.setAttribute('aria-label', `View ${file}`);
+          row.addEventListener('click', event => {
+            if (!event.target.closest('a, button')) openViewer(file);
+          });
+          row.addEventListener('keydown', event => {
+            if (!event.target.closest('a, button') && (event.key === 'Enter' || event.key === ' ')) {
+              event.preventDefault();
+              openViewer(file);
+            }
+          });
           const nameSpan = document.createElement('span');
           nameSpan.className = '';
           nameSpan.textContent = file;
           const btnContainer = document.createElement('div');
           btnContainer.className = 'buttons';
-          const viewBtn = document.createElement('button');
-          viewBtn.textContent = 'View';
-          viewBtn.className = '';
-          viewBtn.addEventListener('click', () => openViewer(file));
           const dlLink = document.createElement('a');
           dlLink.textContent = 'Download';
           // Use a data URI for downloads.  When users click the link, the
@@ -295,7 +303,6 @@
           dlLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(raw);
           dlLink.setAttribute('download', file);
           dlLink.className = '';
-          btnContainer.appendChild(viewBtn);
           btnContainer.appendChild(dlLink);
           row.appendChild(nameSpan);
           row.appendChild(btnContainer);
